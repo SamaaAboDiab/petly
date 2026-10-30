@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Static design tokens ---------- */
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #fff8e6;
+  --color-brand-100: #ffefc2;
+  --color-brand-200: #ffe08a;
+  --color-brand-300: #fdd055;
+  --color-brand-400: #fbc02d;
+  --color-brand-500: #f5ae0b;
+  --color-brand-600: #d98e06;
+  --color-brand-700: #b26b09;
+  /* Text on yellow surfaces — stays dark in both themes */
+  --color-on-brand: #1e1b16;
+
+  --shadow-soft: 0 10px 30px -14px rgb(120 80 10 / 0.22);
+  --shadow-lift: 0 22px 45px -18px rgb(120 80 10 / 0.35);
+  --shadow-glow: 0 14px 30px -10px rgb(245 174 11 / 0.6);
+
+  --animate-shimmer: shimmer 1.5s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 8s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.5s ease-in-out;
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--tw-rotate, 0));
+    }
+    50% {
+      transform: translateY(-14px) rotate(var(--tw-rotate, 0));
+    }
+  }
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20%,
+    60% {
+      transform: translateX(-6px);
+    }
+    40%,
+    80% {
+      transform: translateX(6px);
+    }
+  }
+}
+
+/* ---------- Theme-aware semantic tokens ---------- */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+}
+
+:root {
+  --canvas: #fbf6ec;
+  --surface: #ffffff;
+  --surface-2: #f6efe2;
+  --ink: #1e1b16;
+  --muted: #8a8274;
+  --line: #efe6d6;
+  color-scheme: light;
+}
+
+.dark {
+  --canvas: #121110;
+  --surface: #1c1a17;
+  --surface-2: #27241f;
+  --ink: #f6f1e7;
+  --muted: #a39b8c;
+  --line: #312c26;
+  color-scheme: dark;
+}
+
+/* Containers painted in brand yellow: re-scope ink/muted so every child stays readable in dark mode. */
+.on-brand {
+  --ink: #1e1b16;
+  --muted: #6b5f4a;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-canvas text-ink font-sans antialiased transition-colors duration-300;
+  }
+  button {
+    cursor: pointer;
+  }
+  ::selection {
+    @apply bg-brand-300 text-ink;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .focus-ring {
+    @apply outline-none focus-visible:ring-4 focus-visible:ring-brand-300/60;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
