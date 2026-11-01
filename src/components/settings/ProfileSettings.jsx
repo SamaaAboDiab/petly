@@ -15,7 +15,7 @@ const SCHEMA = {
   name: [rules.required('Name'), rules.minLength(3, 'Name')],
   location: [rules.required('Location')],
 };
-const MAX_AVATAR = 5 * 1024 * 1024;
+const MAX_AVATAR = 20 * 1024 * 1024; // compressed before upload
 
 export default function ProfileSettings() {
   const { user, updateUser } = useAuth();
@@ -37,7 +37,7 @@ export default function ProfileSettings() {
   const pickFile = (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/') || file.size > MAX_AVATAR) {
-      toast({ title: 'Photo not accepted', description: 'Use a JPG, PNG or WEBP under 5MB', variant: 'error' });
+      toast({ title: 'Photo not accepted', description: 'Use a JPG, PNG or WEBP under 20MB', variant: 'error' });
       return;
     }
     setAvatarFile(file);
@@ -94,7 +94,7 @@ export default function ProfileSettings() {
                 </Button>
               )}
             </div>
-            <p className="text-xs text-muted">JPG, PNG or WEBP, up to 5MB.</p>
+            <p className="text-xs text-muted">JPG, PNG or WEBP, up to 20MB.</p>
           </div>
           <input
             ref={fileRef}

@@ -6,6 +6,7 @@ const { toAuthUser } = require("../utils/serializers");
 const User = require("../models/User");
 const { notify } = require("../services/notificationService");
 const { sendEmail, resetPasswordEmail } = require("../services/emailService");
+const { clientUrl } = require("../config/cors");
 
 // @route   POST /api/auth/register
 // @access  Public
@@ -70,7 +71,6 @@ const getMe = asyncHandler(async (req, res) => {
 
 const RESET_TTL_MINUTES = 30;
 const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
-const clientUrl = () => (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim();
 
 // @route   POST /api/auth/forgot-password
 // @access  Public (rate-limited)
@@ -85,7 +85,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     user.passwordResetExpires = new Date(Date.now() + RESET_TTL_MINUTES * 60 * 1000);
     await user.save();
 
-    const link = `${clientUrl()}/reset-password/${token}`;
+    const link = `${clientUrl}/reset-password/${token}`;
     await sendEmail({ to: user.email, ...resetPasswordEmail({ name: user.name, link, minutes: RESET_TTL_MINUTES }) });
   }
 

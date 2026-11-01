@@ -1,7 +1,8 @@
 import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
+import { usePolling } from '@/hooks/usePolling';
 import { notificationService } from '@/services/notificationService';
 import { useAuth } from './AuthContext';
-import { useSocketEvent } from './SocketContext';
+import { useSocket, useSocketEvent } from './SocketContext';
 import { useToast } from './ToastContext';
 
 const NotificationContext = createContext(null);
@@ -10,6 +11,7 @@ export function NotificationProvider({ children }) {
   const { user } = useAuth();
   const userId = user?.id;
   const toast = useToast();
+  const socket = useSocket();
   const [items, setItems] = useState([]);
   const [unread, setUnread] = useState(0);
   const [hasMore, setHasMore] = useState(false);
@@ -47,6 +49,24 @@ export function NotificationProvider({ children }) {
       },
       [toast],
     ),
+  );
+
+  // Without a live socket, check for new notifications periodically.
+  usePolling(
+    () =>
+      notificationService
+        .list()
+        .then((data) => {
+          const known = new Set(items.map((n) => n.id));
+          const fresh = data.notifications.filter((n) => !known.has(n.id));
+          setUnread(data.unread);
+          if (!fresh.length) return;
+          setItems((list) => [...fresh.filter((n) => !list.some((item) => item.id === n.id)), ...list]);
+          toast({ title: fresh[0].title, description: fresh[0].body, variant: 'info' });
+        })
+        .catch(() => {}),
+    20_000,
+    Boolean(userId) && loaded && !socket,
   );
 
   const loadMore = useCallback(async () => {

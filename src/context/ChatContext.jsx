@@ -1,4 +1,5 @@
 import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
+import { usePolling } from '@/hooks/usePolling';
 import { chatService, toConversation } from '@/services/chatService';
 import { useAuth } from './AuthContext';
 import { useSocket, useSocketEvent } from './SocketContext';
@@ -30,6 +31,17 @@ export function ChatProvider({ children }) {
       cancelled = true;
     };
   }, [userId]);
+
+  // Without a live socket, refresh the inbox (unread counts, last message) periodically.
+  usePolling(
+    () =>
+      chatService
+        .list()
+        .then(setConversations)
+        .catch(() => {}),
+    10_000,
+    Boolean(userId) && loaded && !socket,
+  );
 
   useSocketEvent(
     'message:new',

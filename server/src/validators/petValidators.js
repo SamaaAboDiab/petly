@@ -1,5 +1,6 @@
 const { body, param, query } = require("express-validator");
 const { CATEGORIES, GENDERS, HEALTH_FEATURES } = require("../config/constants");
+const { isBlobUrl } = require("../utils/files");
 
 // Health flags arrive as "true"/"false" strings in multipart forms.
 const featureRules = HEALTH_FEATURES.map((key) =>
@@ -10,7 +11,11 @@ const imageUrlRule = body("imageUrl")
   .optional({ values: "falsy" })
   .trim()
   .isURL({ protocols: ["http", "https"], require_protocol: true })
-  .withMessage("Image URL must be a valid http(s) link");
+  .withMessage("Image URL must be a valid http(s) link")
+  // Our own Blob URLs are deleted with the listing, so pointing a listing at
+  // someone else's upload could delete their photo.
+  .custom((url) => !isBlobUrl(url))
+  .withMessage("Upload the photo instead of linking to an uploaded one");
 
 const listPetsValidator = [
   query("category").optional().isIn(["all", ...CATEGORIES]).withMessage("Unknown category"),

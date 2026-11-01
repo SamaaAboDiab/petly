@@ -1,13 +1,14 @@
+import { compressImage } from '@/lib/compressImage';
 import { request } from './api';
 import { toUser } from './authService';
 
 export const accountService = {
   /** `values`: { name, location }. Pass `avatar` (File) to replace the photo, or `removeAvatar`. */
-  updateProfile: ({ name, location, avatar, removeAvatar }) => {
+  updateProfile: async ({ name, location, avatar, removeAvatar }) => {
     const form = new FormData();
     form.append('name', name);
     form.append('location', location);
-    if (avatar) form.append('avatar', avatar);
+    if (avatar) form.append('avatar', await compressImage(avatar, 512));
     else if (removeAvatar) form.append('removeAvatar', 'true');
     return request('/account/profile', { method: 'PATCH', body: form }).then((data) => toUser(data.user));
   },

@@ -25,6 +25,7 @@ npm run dev              # http://localhost:5000 (REST + Socket.IO on the same p
 | `CLIENT_URL` | no | comma-separated allowed frontends; first one is used in emailed links. Default `http://localhost:5173` |
 | `RESEND_API_KEY` | no | enables real emails (password reset). Without it, emails are printed in the server terminal |
 | `EMAIL_FROM` | no | e.g. `Petly <noreply@yourdomain.com>` (default: Resend's test sender) |
+| `BLOB_READ_WRITE_TOKEN` | on Vercel | stores uploaded photos in Vercel Blob. Without it they're written to `uploads/` (local only) |
 
 Seeded accounts:
 

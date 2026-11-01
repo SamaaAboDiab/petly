@@ -1,9 +1,6 @@
-const fs = require("fs");
-const path = require("path");
 const crypto = require("crypto");
 const multer = require("multer");
-
-const UPLOADS_ROOT = path.join(__dirname, "..", "..", "uploads");
+const { saveUpload } = require("../utils/files");
 
 // The extension comes from this map — never from the client's file name —
 // so a file can't be uploaded as "image/png" but saved and served as ".html".
@@ -23,33 +20,39 @@ const fileFilter = (req, file, cb) => {
 };
 
 /**
- * Builds an image-upload middleware that saves into uploads/<folder> and
- * copies the public URLs into req.body[bodyKey], so validators and
- * controllers don't need to know whether the request was JSON or multipart.
+ * Builds an image-upload middleware that stores the files (see saveUpload:
+ * uploads/<folder> locally, Vercel Blob in production) and copies the public
+ * URLs into req.body[bodyKey], so validators and controllers don't need to
+ * know whether the request was JSON or multipart.
  */
 const createImageUpload = ({ folder, field, maxCount, bodyKey }) => {
-  const dir = path.join(UPLOADS_ROOT, folder);
-  fs.mkdirSync(dir, { recursive: true });
-
   const upload = multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => cb(null, dir),
-      filename: (req, file, cb) =>
-        cb(null, `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${EXTENSIONS[file.mimetype]}`),
-    }),
+    storage: multer.memoryStorage(),
     fileFilter,
     limits: { fileSize: MAX_FILE_SIZE },
   });
 
-  const attachUrls = (req, res, next) => {
+  const attachUrls = async (req, res, next) => {
     const files = req.files ?? (req.file ? [req.file] : []);
-    if (files.length) {
-      const urls = files.map((file) => `/uploads/${folder}/${file.filename}`);
+    if (!files.length) return next();
+    try {
+      const urls = await Promise.all(
+        files.map((file) =>
+          saveUpload(
+            folder,
+            `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${EXTENSIONS[file.mimetype]}`,
+            file.buffer,
+            file.mimetype
+          )
+        )
+      );
       req.body[bodyKey] = maxCount === 1 ? urls[0] : urls;
-      // validate.js cleans up req.files when a request is rejected.
-      req.files = files;
+      // validate.js removes these again when the request is rejected.
+      req.uploadedUrls = urls;
+      next();
+    } catch (error) {
+      next(error);
     }
-    next();
   };
 
   const parse = maxCount === 1 ? upload.single(field) : upload.array(field, maxCount);

@@ -9,6 +9,7 @@ import SmartImage from '@/components/ui/SmartImage';
 import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
 import { useToast } from '@/context/ToastContext';
+import { usePolling } from '@/hooks/usePolling';
 import { formatDayLabel, formatPrice } from '@/lib/format';
 import { chatService } from '@/services/chatService';
 import ChatComposer from './ChatComposer';
@@ -118,6 +119,27 @@ export default function ChatThread({ conversationId }) {
       clearTimeout(typingTimer);
     };
   }, [socket, conversationId, user?.id, addMessage, markRead]);
+
+  // Without a live socket, fetch the latest page periodically and merge in anything new.
+  const activeConversation = useRef(conversationId);
+  useEffect(() => {
+    activeConversation.current = conversationId;
+  }, [conversationId]);
+  usePolling(
+    () =>
+      chatService
+        .messages(conversationId)
+        .then(({ messages }) => {
+          if (activeConversation.current !== conversationId) return;
+          const known = new Set(thread.messages.map((m) => m.id));
+          const fresh = messages.filter((m) => !known.has(m.id));
+          fresh.forEach(addMessage);
+          if (fresh.some((m) => String(m.sender) !== String(user?.id))) markRead(conversationId);
+        })
+        .catch(() => {}),
+    4000,
+    !socket && !thread.loading && !thread.error,
+  );
 
   // Follow new messages only if the user is already near the bottom.
   useLayoutEffect(() => {

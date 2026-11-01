@@ -1,4 +1,5 @@
 import { BREEDS } from '@/data/pets';
+import { compressImages } from '@/lib/compressImage';
 import { assetUrl, request } from './api';
 
 /** API pet -> the shape components use (absolute image URLs, flat sellerId). */
@@ -11,12 +12,12 @@ export const toPet = (raw) => ({
 export const toSeller = (raw) => raw && { ...raw, avatar: assetUrl(raw.avatar) };
 
 /** Listing form values + photos -> multipart body (empty fields are skipped). */
-const toPetForm = (values, files) => {
+const toPetForm = async (values, files) => {
   const form = new FormData();
   Object.entries(values).forEach(([key, value]) => {
     if (value !== '' && value !== undefined && value !== null) form.append(key, value);
   });
-  files.forEach((file) => form.append('images', file));
+  (await compressImages(files)).forEach((file) => form.append('images', file));
   return form;
 };
 
@@ -48,12 +49,12 @@ export const petService = {
   getMyListings: () => request('/pets/mine').then((data) => data.pets.map(toPet)),
 
   /** `values` from the listing form; `files` are optional uploaded photos. */
-  createPet: (values, files = []) =>
-    request('/pets', { method: 'POST', body: toPetForm(values, files) }).then((data) => toPet(data.pet)),
+  createPet: async (values, files = []) =>
+    request('/pets', { method: 'POST', body: await toPetForm(values, files) }).then((data) => toPet(data.pet)),
 
   /** Same fields as createPet; photos are only replaced when new files or a URL are given. */
-  updatePet: (id, values, files = []) =>
-    request(`/pets/${id}`, { method: 'PUT', body: toPetForm(values, files) }).then((data) => toPet(data.pet)),
+  updatePet: async (id, values, files = []) =>
+    request(`/pets/${id}`, { method: 'PUT', body: await toPetForm(values, files) }).then((data) => toPet(data.pet)),
 
   deletePet: (id) => request(`/pets/${id}`, { method: 'DELETE' }),
 

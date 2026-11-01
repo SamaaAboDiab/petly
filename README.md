@@ -55,6 +55,21 @@ src/
 └── services/        # api.js + auth / pet / cart / favorite / order services
 ```
 
+### Deploying (Vercel)
+
+Frontend and API deploy together as one Vercel project: `vercel.json` builds the
+Vite app, installs `server/` dependencies and rewrites `/api/*` to `api/index.js`,
+which runs the Express app as a serverless function on the same domain (so
+`VITE_API_URL` stays unset). In the Vercel project:
+
+1. **Environment variables:** `MONGO_URI`, `JWT_SECRET` (and optionally `RESEND_API_KEY`, `EMAIL_FROM`, `CLIENT_URL` for a custom domain).
+2. **Storage → Blob:** create a store and connect it; this adds `BLOB_READ_WRITE_TOKEN` for photo uploads.
+3. **MongoDB Atlas → Network Access:** allow `0.0.0.0/0` (Vercel has no fixed IPs).
+
+Vercel functions can't hold WebSocket connections, so Socket.IO isn't available
+there: chat and notifications automatically fall back to polling
+(`hooks/usePolling.js`); typing indicators only appear with a live socket.
+
 ### Extending it
 
 - **API calls:** all go through `request()` in `services/api.js` (token, errors, base URL). Set `VITE_API_URL` in production.

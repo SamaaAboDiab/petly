@@ -1,5 +1,5 @@
-const fs = require("fs");
 const { validationResult } = require("express-validator");
+const { removeUploads } = require("../utils/files");
 
 // Runs after an express-validator chain. If any rule failed, responds with
 // the standard error shape instead of letting the request reach the controller.
@@ -7,9 +7,9 @@ const validate = (req, res, next) => {
   const result = validationResult(req);
 
   if (!result.isEmpty()) {
-    // Multer already wrote any uploaded images to disk - don't leave orphans
+    // The upload middleware already stored any images - don't leave orphans
     // behind for a request we're rejecting.
-    req.files?.forEach((file) => fs.unlink(file.path, () => {}));
+    removeUploads(req.uploadedUrls);
 
     return res.status(400).json({
       success: false,

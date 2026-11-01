@@ -4,8 +4,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 const MAX_FILES = 5;
-const MAX_SIZE = 5 * 1024 * 1024;
+// Photos are compressed before upload (lib/compressImage), so large originals
+// are fine; GIFs are sent as-is and must stay small.
+const MAX_SIZE = 20 * 1024 * 1024;
+const MAX_GIF_SIZE = 2 * 1024 * 1024;
 const ACCEPT = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const isAllowed = (file) =>
+  ACCEPT.includes(file.type) && file.size <= (file.type === 'image/gif' ? MAX_GIF_SIZE : MAX_SIZE);
 
 /** Pick up to 5 photos (click or drag & drop) with instant previews. */
 export default function ImagePicker({ files, onChange, className }) {
@@ -17,8 +22,8 @@ export default function ImagePicker({ files, onChange, className }) {
   useEffect(() => () => previews.forEach((url) => URL.revokeObjectURL(url)), [previews]);
 
   const addFiles = (incoming) => {
-    const valid = Array.from(incoming).filter((file) => ACCEPT.includes(file.type) && file.size <= MAX_SIZE);
-    setError(valid.length < incoming.length ? 'Only JPG, PNG, WEBP or GIF images up to 5MB' : '');
+    const valid = Array.from(incoming).filter(isAllowed);
+    setError(valid.length < incoming.length ? 'Only JPG, PNG or WEBP photos up to 20MB (GIFs up to 2MB)' : '');
     onChange([...files, ...valid].slice(0, MAX_FILES));
   };
 

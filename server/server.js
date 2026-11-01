@@ -17,12 +17,14 @@ const { allowedOrigins } = require("./src/config/cors");
 
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  // Express and Socket.IO share one HTTP server (and one port).
-  const server = http.createServer(app);
-  initSocket(server, allowedOrigins);
+connectDB()
+  .then(() => {
+    // Express and Socket.IO share one HTTP server (and one port).
+    const server = http.createServer(app);
+    initSocket(server, allowedOrigins);
 
-  server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-});
+    server.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(() => process.exit(1));
