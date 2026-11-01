@@ -22,14 +22,14 @@ run(async () => {
   // Stats
   let r = await call("GET", "/admin/stats", { token: a });
   const s = r.json.data;
-  check("stats totals", s.totals.users === 4 && s.totals.pets === 13 && s.totals.orders === 1 && s.totals.openTickets === 1 && s.totals.revenue === 10600, s.totals);
+  check("stats totals", s.totals.users === 4 && s.totals.pets === 19 && s.totals.orders === 1 && s.totals.openTickets === 1 && s.totals.revenue === 10600, s.totals);
   check("14-day series with today's order", s.ordersByDay.length === 14 && s.ordersByDay.at(-1).orders === 1, s.ordersByDay.slice(-2));
-  check("pets by category", s.petsByCategory.reduce((sum, c) => sum + c.count, 0) === 13, s.petsByCategory);
+  check("pets by category", s.petsByCategory.reduce((sum, c) => sum + c.count, 0) === 19, s.petsByCategory);
   check("recent orders show buyer", s.recentOrders[0].buyer === "Ahmed Mohamed", s.recentOrders);
 
   // Users list
   r = await call("GET", "/users?search=mari", { token: a });
-  check("search users", r.json.data.users.length === 1 && r.json.data.users[0].email === "mariam@petly.com" && r.json.data.users[0].listings === 5, r.json.data);
+  check("search users", r.json.data.users.length === 1 && r.json.data.users[0].email === "mariam@petly.com" && r.json.data.users[0].listings === 7, r.json.data);
   check("admin user list hides private fields", !("favorites" in r.json.data.users[0]) && !("password" in r.json.data.users[0]), r.json.data.users[0]);
   r = await call("GET", "/users?search=.*", { token: a });
   check("search is literal (no regex injection)", r.json.data.users.length === 0, r.json.data);

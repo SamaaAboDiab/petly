@@ -1,4 +1,4 @@
-import { BREEDS, CATEGORIES } from '@/data/pets';
+import { BREEDS } from '@/data/pets';
 import { assetUrl, request } from './api';
 
 /** API pet -> the shape components use (absolute image URLs, flat sellerId). */
@@ -41,17 +41,9 @@ export const petService = {
       related: related.map(toPet),
     })),
 
-  /** Category cards: static labels/covers merged with live counts. */
-  getCategories: () =>
-    request('/pets/categories').then(({ categories }) =>
-      CATEGORIES.filter((c) => c.id !== 'all').map((c) => ({
-        ...c,
-        count: categories.find((item) => item.id === c.id)?.count ?? 0,
-      })),
-    ),
-
   // Curated list — kept static on purpose (editorial content, not inventory).
-  getBreeds: () => Promise.resolve(BREEDS),
+  getBreeds: (category = 'all') =>
+    Promise.resolve(category === 'all' ? BREEDS : BREEDS.filter((b) => b.category.toLowerCase() === category)),
 
   getMyListings: () => request('/pets/mine').then((data) => data.pets.map(toPet)),
 

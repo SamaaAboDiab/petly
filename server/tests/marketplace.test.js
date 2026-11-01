@@ -14,7 +14,7 @@ run(async () => {
 
   // ---- Search by seller name ----
   let s = await call("GET", "/pets?search=mariam");
-  check("search matches seller name", s.json.data.pets.length === 5 && s.json.data.pets.every((p) => p.seller === mariam.user.id), s.json.data.pets.map((p) => p.name));
+  check("search matches seller name", s.json.data.pets.length === 7 && s.json.data.pets.every((p) => p.seller === mariam.user.id), s.json.data.pets.map((p) => p.name));
   s = await call("GET", "/pets?search=.*");
   check("seller search is literal (no regex injection)", s.json.data.pets.length === 0, s.json.data.pets.length);
 
@@ -109,7 +109,7 @@ run(async () => {
   const page = r.json.data;
   check(
     "seller page: profile, available pets, sold count",
-    r.status === 200 && page.seller.name === "Mariam Adel" && page.pets.length === 4 && page.pets.every((p) => p.status !== "sold") && page.seller.soldCount === 1,
+    r.status === 200 && page.seller.name === "Mariam Adel" && page.pets.length === 6 && page.pets.every((p) => p.status !== "sold") && page.seller.soldCount === 1,
     { seller: page?.seller, pets: page?.pets?.map((p) => p.name) }
   );
   check("seller page hides private fields", !("email" in page.seller) && !("favorites" in page.seller), page.seller);

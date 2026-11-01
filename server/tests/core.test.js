@@ -48,7 +48,7 @@ const PNG = Buffer.from(
   try {
     // ---------- Pets (public) ----------
     let r = await call("GET", "/pets");
-    check("list pets", r.status === 200 && r.json.data.pets.length === 13, r.json);
+    check("list pets", r.status === 200 && r.json.data.pets.length === 19, r.json);
 
     r = await call("GET", "/pets?category=cats");
     check("filter by category", r.json.data.pets.length === 4 && r.json.data.pets.every((p) => p.category === "cats"), r.json);
@@ -60,19 +60,19 @@ const PNG = Buffer.from(
     check("sort by price", r.json.data.pets[0].price === 450, r.json.data.pets[0]);
 
     r = await call("GET", "/pets?category[$ne]=dogs");
-    check("query operator injection ignored", r.status === 200 && r.json.data.pets.length === 13, r.json);
+    check("query operator injection ignored", r.status === 200 && r.json.data.pets.length === 19, r.json);
 
     r = await call("GET", "/pets?category=fish");
     check("unknown category rejected", r.status === 400, r.json);
 
     r = await call("GET", "/pets/categories");
     const counts = Object.fromEntries(r.json.data.categories.map((c) => [c.id, c.count]));
-    check("category counts", counts.dogs === 6 && counts.cats === 4 && counts.birds === 3, counts);
+    check("category counts", counts.dogs === 6 && counts.cats === 4 && counts.birds === 9, counts);
 
     r = await call("GET", "/pets/golden-retriever");
     check(
       "pet by slug + seller + related",
-      r.status === 200 && r.json.data.seller.name === "Ahmed Mohamed" && r.json.data.seller.listings === 4 && r.json.data.related.length === 4,
+      r.status === 200 && r.json.data.seller.name === "Ahmed Mohamed" && r.json.data.seller.listings === 6 && r.json.data.related.length === 4,
       r.json
     );
     const golden = r.json.data.pet;
@@ -196,7 +196,7 @@ const PNG = Buffer.from(
     r = await call("GET", "/favorites", { token: saraToken });
     check(
       "get favorites",
-      r.json.data.pets.length === 1 && r.json.data.sellers[0].name === "Ahmed Mohamed" && r.json.data.sellers[0].listings === 4,
+      r.json.data.pets.length === 1 && r.json.data.sellers[0].name === "Ahmed Mohamed" && r.json.data.sellers[0].listings === 6,
       r.json
     );
 

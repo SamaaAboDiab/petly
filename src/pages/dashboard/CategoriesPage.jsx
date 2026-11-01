@@ -2,7 +2,6 @@ import { ArrowDownUp, ArrowRight, Search, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
 import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
-import CategoryCard, { CategoryCardSkeleton } from '@/components/pets/CategoryCard';
 import CategoryFilter from '@/components/pets/CategoryFilter';
 import { PRICE_LIMITS, SORT_OPTIONS } from '@/components/pets/FilterSheet';
 import PetGrid from '@/components/pets/PetGrid';
@@ -34,8 +33,7 @@ export default function CategoriesPage() {
       { replace: true },
     );
 
-  const categories = useAsync(() => petService.getCategories(), []);
-  const breeds = useAsync(() => petService.getBreeds(), []);
+  const breeds = useAsync(() => petService.getBreeds(category), [category]);
   const pets = useAsync(
     () => petService.getPets({ category, query: debouncedQuery, sort, maxPrice }),
     [category, debouncedQuery, sort, maxPrice],
@@ -84,31 +82,7 @@ export default function CategoriesPage() {
 
       <CategoryFilter value={category} onChange={(id) => updateParam('type', id, 'all')} />
 
-      <section>
-        <SectionHeader title="Categories" action={seeAll} />
-        <div className="grid grid-cols-3 gap-3 sm:gap-5">
-          {categories.loading
-            ? Array.from({ length: 3 }, (_, i) => <CategoryCardSkeleton key={i} />)
-            : categories.data?.map((item) => (
-                <CategoryCard
-                  key={item.id}
-                  category={item}
-                  active={item.id === category}
-                  onSelect={(id) => updateParam('type', id === category ? 'all' : id, 'all')}
-                />
-              ))}
-        </div>
-      </section>
-
-      <section>
-        <SectionHeader title="Popular Breeds" action={seeAll} />
-        <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
-          {breeds.loading
-            ? Array.from({ length: 6 }, (_, i) => <BreedCardSkeleton key={i} />)
-            : breeds.data?.map((breed) => <BreedCard key={breed.id} breed={breed} />)}
-        </div>
-      </section>
-
+      {/* The selected tab's pets come first, right under the tabs. */}
       <section id="all-pets" className="scroll-mt-24">
         <SectionHeader
           title={category === 'all' ? 'All pets' : `${category[0].toUpperCase()}${category.slice(1)}`}
@@ -154,6 +128,15 @@ export default function CategoriesPage() {
             </Button>
           }
         />
+      </section>
+
+      <section>
+        <SectionHeader title="Popular Breeds" action={seeAll} />
+        <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
+          {breeds.loading
+            ? Array.from({ length: 6 }, (_, i) => <BreedCardSkeleton key={i} />)
+            : breeds.data?.map((breed) => <BreedCard key={breed.id} breed={breed} />)}
+        </div>
       </section>
     </PageTransition>
   );

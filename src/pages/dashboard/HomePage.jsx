@@ -16,7 +16,7 @@ import { petService } from '@/services/petService';
 export default function HomePage() {
   const [category, setCategory] = useState('all');
   const featured = useAsync(() => petService.getFeatured(category), [category]);
-  const breeds = useAsync(() => petService.getBreeds(), []);
+  const breeds = useAsync(() => petService.getBreeds(category), [category]);
 
   return (
     <PageTransition className="space-y-7 lg:space-y-14">
@@ -57,7 +57,10 @@ export default function HomePage() {
       </section>
 
       <section>
-        <SectionHeader title="Popular Breeds" to="/app/categories" />
+        <SectionHeader
+          title="Popular Breeds"
+          to={category === 'all' ? '/app/categories' : `/app/categories?type=${category}`}
+        />
         <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
           {breeds.loading
             ? Array.from({ length: 6 }, (_, i) => <BreedCardSkeleton key={i} />)

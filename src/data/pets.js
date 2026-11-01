@@ -19,6 +19,10 @@ export const BREEDS = [
   { id: 'german-shepherd', name: 'German Shepherd', category: 'Dogs', image: img('photo-1589941013453-ec89f33b5e95', 400) },
   { id: 'siberian-husky', name: 'Husky', category: 'Dogs', image: img('photo-1605568427561-40dd23c2acea', 400) },
   { id: 'maine-coon', name: 'Maine Coon', category: 'Cats', image: img('photo-1615796153287-98eacf0abb13', 400) },
+  { id: 'african-grey-parrot', name: 'African Grey', category: 'Birds', image: img('photo-1762849283622-a0d2beeaa4f6', 400) },
+  { id: 'umbrella-cockatoo', name: 'Cockatoo', category: 'Birds', image: img('photo-1782729849393-21a2d5c0d51b', 400) },
+  { id: 'sun-conure', name: 'Sun Conure', category: 'Birds', image: img('photo-1709025219993-37d2a0a70031', 400) },
+  { id: 'cockatiel', name: 'Cockatiel', category: 'Birds', image: img('photo-1759384278288-14f680d9cae7', 400) },
 ];
 
 /** Marketing visuals for the splash and auth screens (shown before login). */
