@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Trash2 } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CartItem from '@/components/cart/CartItem';
 import CheckoutSuccess from '@/components/cart/CheckoutSuccess';
 import OrderSummary from '@/components/cart/OrderSummary';
@@ -9,6 +9,7 @@ import PageTransition from '@/components/layout/PageTransition';
 import { buttonStyles } from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import EmptyState from '@/components/ui/EmptyState';
+import IconButton from '@/components/ui/IconButton';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
 import { pluralize } from '@/lib/format';
@@ -16,6 +17,7 @@ import { pluralize } from '@/lib/format';
 export default function CartPage() {
   const { items, clear, checkout, setAllSelected } = useCart();
   const toast = useToast();
+  const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
   const [placedOrders, setPlacedOrders] = useState(null);
 
@@ -40,7 +42,14 @@ export default function CartPage() {
 
   return (
     <PageTransition>
-      <div className="mb-8 flex items-center justify-between">
+      {/* Mobile header from the design: back · title · clear. */}
+      <div className="mb-4 grid h-16 grid-cols-[2.75rem_1fr_2.75rem] items-center lg:hidden">
+        <IconButton icon={ArrowLeft} label="Back" variant="ghost" onClick={() => navigate(-1)} />
+        <h1 className="text-center text-xl font-bold text-ink">My Cart</h1>
+        {items.length > 0 && <IconButton icon={Trash2} label="Clear cart" variant="ghost" onClick={handleClear} />}
+      </div>
+
+      <div className="mb-8 hidden items-center justify-between lg:flex">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">My Cart</h1>
           <p className="mt-1 text-muted">{pluralize(items.length, 'pet')} in your cart</p>

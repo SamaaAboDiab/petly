@@ -13,7 +13,8 @@ import UserAvatar from './UserAvatar';
 
 const isMac = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform);
 
-export default function Topbar({ onOpenSearch }) {
+/** `hideOnMobile`: full-screen pages (pet details, cart) draw their own mobile header. */
+export default function Topbar({ onOpenSearch, hideOnMobile = false }) {
   const { user } = useAuth();
   const { itemCount } = useCart();
   const { unreadTotal } = useChat();
@@ -33,10 +34,11 @@ export default function Topbar({ onOpenSearch }) {
       className={cn(
         'sticky top-0 z-20 transition-all duration-300',
         scrolled ? 'border-b border-line bg-canvas/80 backdrop-blur-xl' : 'bg-transparent',
+        hideOnMobile && 'hidden lg:block',
       )}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-10">
-        <Logo className="lg:hidden" withTagline={false} />
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-10">
+        <Logo className="lg:hidden" />
 
         <div className="hidden min-w-0 flex-1 items-center gap-4 lg:flex">
           <div>
@@ -66,7 +68,7 @@ export default function Topbar({ onOpenSearch }) {
               {isMac ? '⌘' : 'Ctrl'} K
             </kbd>
           </button>
-          <IconButton icon={Search} label="Search" onClick={onOpenSearch} className="md:hidden" />
+          <IconButton icon={Search} label="Search" onClick={onOpenSearch} className="hidden sm:inline-grid md:hidden" />
           <IconButton
             icon={isDark ? Sun : Moon}
             label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}

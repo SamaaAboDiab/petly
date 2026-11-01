@@ -99,23 +99,36 @@ export default function ProfilePage() {
           <svg viewBox="0 0 400 140" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-32 w-full" aria-hidden>
             <path d="M0 0h400v90c-60 40-120 50-200 20S60 80 0 120z" className="fill-brand-400" />
           </svg>
-          <div className="relative px-6 pb-6 pt-14">
-            <div className="relative w-fit">
-              <UserAvatar user={user} className="size-24 text-3xl ring-[6px]" />
-              <button
-                type="button"
-                onClick={() => navigate('/app/settings')}
-                aria-label="Edit profile"
-                className="focus-ring absolute bottom-0 right-0 grid size-8 place-items-center rounded-full bg-surface text-ink shadow-soft transition hover:scale-110 hover:bg-brand-100"
-              >
-                <Pencil className="size-3.5" />
-              </button>
+          <button
+            type="button"
+            onClick={() => navigate('/app/settings')}
+            aria-label="Settings"
+            className="on-brand focus-ring absolute right-4 top-4 z-10 grid size-10 place-items-center rounded-full text-ink transition hover:rotate-45 hover:bg-white/30"
+          >
+            <Settings className="size-5" />
+          </button>
+          {/* Phones: photo beside the name, like the design. Wider screens: stacked. */}
+          <div className="relative px-5 pb-6 pt-14 sm:px-6">
+            <div className="flex items-center gap-4 lg:block">
+              <div className="relative w-fit shrink-0">
+                <UserAvatar user={user} className="size-24 text-3xl ring-[6px]" />
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/settings')}
+                  aria-label="Edit profile"
+                  className="focus-ring absolute bottom-0 right-0 grid size-8 place-items-center rounded-full bg-surface text-ink shadow-soft transition hover:scale-110 hover:bg-brand-100"
+                >
+                  <Pencil className="size-3.5" />
+                </button>
+              </div>
+              <div className="min-w-0 pt-8 lg:pt-0">
+                <h1 className="truncate text-xl font-extrabold text-ink sm:text-2xl lg:mt-4">{user?.name}</h1>
+                <p className="truncate text-sm text-muted">{user?.email}</p>
+                <p className="mt-1 flex items-center gap-1 text-sm text-muted">
+                  <MapPin className="size-4 shrink-0" /> <span className="truncate">{user?.location ?? 'Cairo, Egypt'}</span>
+                </p>
+              </div>
             </div>
-            <h1 className="mt-4 text-2xl font-extrabold text-ink">{user?.name}</h1>
-            <p className="text-sm text-muted">{user?.email}</p>
-            <p className="mt-1 flex items-center gap-1 text-sm text-muted">
-              <MapPin className="size-4" /> {user?.location ?? 'Cairo, Egypt'}
-            </p>
 
             <div className="mt-5 flex divide-x divide-line rounded-2xl border border-line">
               <StatCard value={listings.data?.length ?? 0} label="Listings" />

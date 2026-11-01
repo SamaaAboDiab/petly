@@ -14,14 +14,14 @@ import {
   Trash2,
   Venus,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
 import AddPetModal from '@/components/pets/AddPetModal';
 import CategoryIcon from '@/components/pets/CategoryIcon';
 import FavoriteButton from '@/components/pets/FavoriteButton';
 import HealthFeatures from '@/components/pets/HealthFeatures';
-import PetGallery from '@/components/pets/PetGallery';
+import PetGallery, { GalleryThumbs, useGallery } from '@/components/pets/PetGallery';
 import PetGrid from '@/components/pets/PetGrid';
 import SellerCard from '@/components/pets/SellerCard';
 import Badge from '@/components/ui/Badge';
@@ -91,6 +91,10 @@ export default function PetDetailsPage() {
   const [deleting, setDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
   const { openChat, starting: openingChat } = useStartChat();
+  // Lifted so the thumbnails can sit under the seller card on mobile (as in the design).
+  const gallery = useGallery(data?.pet.images.length ?? 1);
+  const { goTo } = gallery;
+  useEffect(() => goTo(0), [petId, goTo]);
 
   if (loading) return <DetailsSkeleton />;
 
@@ -155,13 +159,28 @@ export default function PetDetailsPage() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="focus-ring group mb-6 inline-flex items-center gap-2 rounded-xl text-sm font-semibold text-muted transition hover:text-ink"
+          className="focus-ring group mb-6 hidden items-center gap-2 rounded-xl text-sm font-semibold text-muted transition hover:text-ink lg:inline-flex"
         >
           <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" /> Back
         </button>
 
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          <PetGallery images={pet.images} name={pet.name}>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-12">
+          {/* Mobile: edge-to-edge photo with back/favorite/share on top, like the design. */}
+          <PetGallery
+            images={pet.images}
+            name={pet.name}
+            gallery={gallery}
+            frameClassName="max-lg:-mx-4 max-lg:aspect-[4/3.3] max-lg:rounded-none max-lg:rounded-b-[2rem] max-lg:shadow-none"
+            thumbsClassName="hidden lg:block"
+          >
+            <IconButton
+              icon={ArrowLeft}
+              label="Back"
+              variant="glass"
+              size="sm"
+              className="absolute left-4 top-4 size-10 lg:hidden"
+              onClick={() => navigate(-1)}
+            />
             <div className="absolute right-4 top-4 flex gap-2">
               <FavoriteButton active={isFavorite(pet.id)} onToggle={() => toggleFavorite(pet)} />
               <IconButton icon={Share2} label="Share" variant="glass" size="sm" className="size-10" onClick={share} />
@@ -211,6 +230,8 @@ export default function PetDetailsPage() {
               />
             )}
 
+            <GalleryThumbs images={pet.images} gallery={gallery} className="mt-6 lg:hidden" />
+
             {sold && (
               <p className="mt-6 flex items-center gap-2 rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink">
                 <HeartHandshake className="size-5 text-brand-500" />
@@ -218,7 +239,8 @@ export default function PetDetailsPage() {
               </p>
             )}
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {/* Mobile: these actions live in the sticky bar at the bottom of the screen. */}
+            <div className="mt-6 hidden gap-3 sm:grid-cols-2 lg:grid">
               {isOwner ? (
                 <>
                   <Button size="lg" leftIcon={Pencil} onClick={() => setEditing(true)} disabled={sold}>
@@ -246,6 +268,31 @@ export default function PetDetailsPage() {
             </div>
           </motion.div>
         </div>
+      </div>
+
+      {/* Mobile sticky action bar (the bottom nav is hidden on this page). */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl lg:hidden">
+        {isOwner ? (
+          <div className="flex gap-3">
+            <IconButton icon={Trash2} label="Delete listing" onClick={() => setConfirmDelete(true)} className="size-13 rounded-2xl hover:text-red-500" />
+            <Button size="lg" block leftIcon={Pencil} onClick={() => setEditing(true)} disabled={sold}>
+              {sold ? 'Sold' : 'Edit listing'}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            <IconButton
+              icon={inCart ? Check : ShoppingBag}
+              label={sold ? 'Already adopted' : inCart ? 'View cart' : 'Add to cart'}
+              disabled={sold}
+              onClick={() => (inCart ? navigate('/app/cart') : addToCart(pet))}
+              className="size-13 rounded-2xl disabled:opacity-40"
+            />
+            <Button size="lg" block leftIcon={MessageCircle} onClick={contactSeller} loading={openingChat} disabled={!seller}>
+              Contact Seller
+            </Button>
+          </div>
+        )}
       </div>
 
       {related.length > 0 && (

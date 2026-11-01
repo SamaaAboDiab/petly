@@ -4,7 +4,7 @@ import Skeleton from '@/components/ui/Skeleton';
 
 export default function BreedCard({ breed }) {
   return (
-    <Link to={`/app/pets/${breed.id}`} className="focus-ring group block w-36 shrink-0 rounded-2xl sm:w-auto">
+    <Link to={`/app/pets/${breed.id}`} className="focus-ring group block w-28 shrink-0 rounded-2xl sm:w-auto">
       <SmartImage
         src={breed.image}
         alt={breed.name}
@@ -21,7 +21,7 @@ export default function BreedCard({ breed }) {
 
 export function BreedCardSkeleton() {
   return (
-    <div className="w-36 shrink-0 sm:w-auto">
+    <div className="w-28 shrink-0 sm:w-auto">
       <Skeleton className="aspect-square" rounded="rounded-2xl" />
       <Skeleton className="mt-2.5 h-4 w-3/4" />
       <Skeleton className="mt-1.5 h-3 w-1/3" />

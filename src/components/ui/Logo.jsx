@@ -15,7 +15,7 @@ export default function Logo({ withTagline = true, size = 'md', className }) {
       </span>
       <div className="leading-tight">
         <p className={cn('font-extrabold tracking-tight text-ink', large ? 'text-4xl' : 'text-2xl')}>Petly</p>
-        {withTagline && <p className="text-xs font-medium text-muted">Happy Pets, Happy Homes</p>}
+        {withTagline && <p className="whitespace-nowrap text-xs font-medium text-muted">Happy Pets, Happy Homes</p>}
       </div>
     </div>
   );

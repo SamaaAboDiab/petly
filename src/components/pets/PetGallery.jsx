@@ -24,16 +24,68 @@ function ArrowButton({ direction, onClick, className }) {
   );
 }
 
-export default function PetGallery({ images, name, children }) {
+/**
+ * Gallery state (current photo, slide direction, lightbox). Lift it to the page
+ * with `useGallery` when the thumbnails render somewhere else than the photo.
+ */
+export function useGallery(total) {
   const [[index, direction], setSlide] = useState([0, 0]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const total = images.length;
 
   const paginate = useCallback(
     (step) => setSlide(([current]) => [(current + step + total) % total, step]),
     [total],
   );
-  const goTo = (target) => setSlide(([current]) => [target, target > current ? 1 : -1]);
+  const goTo = useCallback((target) => setSlide(([current]) => [target, target > current ? 1 : -1]), []);
+
+  return { index, direction, total, paginate, goTo, lightboxOpen, setLightboxOpen };
+}
+
+/** "More Photos" strip; the 4th tile opens the lightbox when there are more. */
+export function GalleryThumbs({ images, gallery, className }) {
+  const { index, total, goTo, setLightboxOpen } = gallery;
+  if (total <= 1) return null;
+
+  return (
+    <div className={className}>
+      <p className="mb-3 text-sm font-bold text-ink">More Photos</p>
+      <div className="grid grid-cols-4 gap-3">
+        {images.slice(0, VISIBLE_THUMBS).map((src, i) => {
+          const isLastWithMore = i === VISIBLE_THUMBS - 1 && total > VISIBLE_THUMBS;
+          return (
+            <button
+              key={src}
+              type="button"
+              onClick={() => (isLastWithMore ? setLightboxOpen(true) : goTo(i))}
+              aria-label={isLastWithMore ? `View all ${total} photos` : `Show photo ${i + 1}`}
+              className={cn(
+                'focus-ring relative overflow-hidden rounded-2xl ring-offset-2 ring-offset-canvas transition-all hover:-translate-y-1',
+                i === index && !isLastWithMore ? 'ring-3 ring-brand-400' : 'opacity-80 hover:opacity-100',
+              )}
+            >
+              <SmartImage src={src} alt="" className="aspect-[4/3]" />
+              {isLastWithMore && (
+                <span className="absolute inset-0 grid place-items-center bg-black/55 text-lg font-bold text-white">
+                  +{total - VISIBLE_THUMBS + 1}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Swipeable photo viewer + fullscreen lightbox. `children` render on top of the
+ * photo (e.g. favorite/share buttons). Pass `gallery` from `useGallery` to
+ * control it from outside; `thumbsClassName` styles the built-in thumbnail strip.
+ */
+export default function PetGallery({ images, name, gallery: external, frameClassName, thumbsClassName, children }) {
+  const internal = useGallery(images.length);
+  const gallery = external ?? internal;
+  const { index, direction, total, paginate, goTo, lightboxOpen, setLightboxOpen } = gallery;
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -69,7 +121,7 @@ export default function PetGallery({ images, name, children }) {
 
   return (
     <div>
-      <div className="group relative aspect-[4/3.2] overflow-hidden rounded-[2rem] bg-surface-2 shadow-soft">
+      <div className={cn('group relative aspect-[4/3.2] overflow-hidden rounded-[2rem] bg-surface-2 shadow-soft', frameClassName)}>
         {slide}
         {children}
         {total > 1 && (
@@ -91,35 +143,7 @@ export default function PetGallery({ images, name, children }) {
         </span>
       </div>
 
-      {total > 1 && (
-        <div className="mt-4">
-          <p className="mb-3 text-sm font-bold text-ink">More Photos</p>
-          <div className="grid grid-cols-4 gap-3">
-            {images.slice(0, VISIBLE_THUMBS).map((src, i) => {
-              const isLastWithMore = i === VISIBLE_THUMBS - 1 && total > VISIBLE_THUMBS;
-              return (
-                <button
-                  key={src}
-                  type="button"
-                  onClick={() => (isLastWithMore ? setLightboxOpen(true) : goTo(i))}
-                  aria-label={isLastWithMore ? `View all ${total} photos` : `Show photo ${i + 1}`}
-                  className={cn(
-                    'focus-ring relative overflow-hidden rounded-2xl ring-offset-2 ring-offset-canvas transition-all hover:-translate-y-1',
-                    i === index && !isLastWithMore ? 'ring-3 ring-brand-400' : 'opacity-80 hover:opacity-100',
-                  )}
-                >
-                  <SmartImage src={src} alt="" className="aspect-[4/3]" />
-                  {isLastWithMore && (
-                    <span className="absolute inset-0 grid place-items-center bg-black/55 text-lg font-bold text-white">
-                      +{total - VISIBLE_THUMBS + 1}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <GalleryThumbs images={images} gallery={gallery} className={cn('mt-4', thumbsClassName)} />
 
       <Modal
         open={lightboxOpen}

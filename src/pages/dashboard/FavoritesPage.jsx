@@ -1,12 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, Trash2, Users } from 'lucide-react';
+import { ArrowLeft, Heart, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
 import PetListItem from '@/components/pets/PetListItem';
 import SellerCard from '@/components/pets/SellerCard';
 import { buttonStyles } from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
+import IconButton from '@/components/ui/IconButton';
 import SegmentedControl from '@/components/ui/SegmentedControl';
 import { useFavorites } from '@/context/FavoritesContext';
 import { useToast } from '@/context/ToastContext';
@@ -18,6 +19,7 @@ export default function FavoritesPage() {
   const { toggleFavorite } = usePetActions();
   const { openChat } = useStartChat();
   const toast = useToast();
+  const navigate = useNavigate();
   const [tab, setTab] = useState('pets');
 
   const currentCount = tab === 'pets' ? pets.length : sellers.length;
@@ -29,7 +31,14 @@ export default function FavoritesPage() {
 
   return (
     <PageTransition>
-      <div className="mb-8 flex items-center justify-between">
+      {/* Mobile header from the design: back · title · clear. */}
+      <div className="mb-4 grid h-16 grid-cols-[2.75rem_1fr_2.75rem] items-center lg:hidden">
+        <IconButton icon={ArrowLeft} label="Back" variant="ghost" onClick={() => navigate(-1)} />
+        <h1 className="text-center text-xl font-bold text-ink">My Favorites</h1>
+        {currentCount > 0 && <IconButton icon={Trash2} label={`Clear favorite ${tab}`} variant="ghost" onClick={handleClear} />}
+      </div>
+
+      <div className="mb-8 hidden items-center justify-between lg:flex">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">My Favorites</h1>
           <p className="mt-1 text-muted">Pets and sellers you love, all in one place.</p>
@@ -49,7 +58,7 @@ export default function FavoritesPage() {
       <SegmentedControl
         value={tab}
         onChange={setTab}
-        className="mb-8 max-w-md"
+        className="mb-6 max-w-md lg:mb-8"
         options={[
           { value: 'pets', label: 'Pets', count: pets.length },
           { value: 'sellers', label: 'Sellers', count: sellers.length },

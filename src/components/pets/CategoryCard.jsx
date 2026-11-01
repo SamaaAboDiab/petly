@@ -13,22 +13,22 @@ export default function CategoryCard({ category, active, onSelect }) {
       whileTap={{ scale: 0.98 }}
       aria-pressed={active}
       className={cn(
-        'focus-ring group overflow-hidden rounded-3xl border bg-surface p-2 text-left shadow-soft transition-all duration-300 hover:shadow-lift',
+        'focus-ring group overflow-hidden rounded-3xl border bg-surface p-1.5 text-left shadow-soft transition-all duration-300 hover:shadow-lift sm:p-2',
         active ? 'border-brand-400 ring-4 ring-brand-300/40' : 'border-line',
       )}
     >
       <SmartImage
         src={category.cover}
         alt={category.label}
-        className="aspect-[4/3] rounded-2xl bg-brand-100"
+        className="aspect-[4/4.6] rounded-2xl bg-brand-100 sm:aspect-[4/3]"
         imgClassName="transition-transform !duration-700 group-hover:scale-110"
       />
-      <div className="flex items-center justify-between px-2 pb-1.5 pt-3">
-        <div>
-          <p className="font-bold text-ink">{category.label}</p>
-          <p className="text-xs text-muted">{category.count}+ pets</p>
+      <div className="flex items-end justify-between gap-1 px-1 pb-1 pt-2.5 sm:items-center sm:px-2 sm:pb-1.5 sm:pt-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-ink sm:text-base">{category.label}</p>
+          <p className="text-[11px] text-muted sm:text-xs">{category.count}+ pets</p>
         </div>
-        <span className="grid size-8 place-items-center rounded-full bg-brand-400 text-on-brand transition-transform duration-300 group-hover:translate-x-1">
+        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-brand-400 text-on-brand transition-transform duration-300 group-hover:translate-x-1 sm:size-8">
           <ChevronRight className="size-4" strokeWidth={2.6} />
         </span>
       </div>

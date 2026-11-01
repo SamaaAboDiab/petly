@@ -1,6 +1,7 @@
 import { ArrowDownUp, Search, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
+import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
 import CategoryCard, { CategoryCardSkeleton } from '@/components/pets/CategoryCard';
 import CategoryFilter from '@/components/pets/CategoryFilter';
 import PetGrid from '@/components/pets/PetGrid';
@@ -38,6 +39,7 @@ export default function CategoriesPage() {
     );
 
   const categories = useAsync(() => petService.getCategories(), []);
+  const breeds = useAsync(() => petService.getBreeds(), []);
   const pets = useAsync(
     () => petService.getPets({ category, query: debouncedQuery, sort }),
     [category, debouncedQuery, sort],
@@ -46,8 +48,9 @@ export default function CategoriesPage() {
   const resetFilters = () => setParams({}, { replace: true });
 
   return (
-    <PageTransition className="space-y-10">
-      <div>
+    <PageTransition className="space-y-7 sm:space-y-10">
+      {/* The mobile design goes straight to search, like the home screen. */}
+      <div className="hidden sm:block">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Explore pets</h1>
         <p className="mt-1 text-muted">Browse by category, breed or city.</p>
       </div>
@@ -72,7 +75,7 @@ export default function CategoriesPage() {
 
       <section>
         <SectionHeader title="Categories" />
-        <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-3 sm:gap-5">
+        <div className="grid grid-cols-3 gap-3 sm:gap-5">
           {categories.loading
             ? Array.from({ length: 3 }, (_, i) => <CategoryCardSkeleton key={i} />)
             : categories.data?.map((item) => (
@@ -83,6 +86,15 @@ export default function CategoriesPage() {
                   onSelect={(id) => updateParam('type', id === category ? 'all' : id, 'all')}
                 />
               ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeader title="Popular Breeds" />
+        <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
+          {breeds.loading
+            ? Array.from({ length: 6 }, (_, i) => <BreedCardSkeleton key={i} />)
+            : breeds.data?.map((breed) => <BreedCard key={breed.id} breed={breed} />)}
         </div>
       </section>
 

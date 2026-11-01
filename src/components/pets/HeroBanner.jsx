@@ -17,17 +17,28 @@ export default function HeroBanner() {
   };
 
   return (
-    <section className="on-brand relative overflow-hidden rounded-[2rem] bg-linear-to-br from-brand-200 via-brand-300 to-brand-400 p-6 sm:p-10">
+    <section className="on-brand relative overflow-hidden rounded-[2rem] bg-linear-to-br from-brand-200 via-brand-300 to-brand-400 p-5 sm:p-10">
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute -left-16 -top-16 size-64 rounded-full bg-white/30 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 right-1/3 size-72 rounded-full bg-brand-500/30 blur-3xl" />
+
+      {/* Mobile: the puppy fills the right side and fades into the card, like the design. */}
+      <motion.img
+        src={HERO_IMAGE}
+        alt=""
+        aria-hidden
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="pointer-events-none absolute right-0 top-0 h-[calc(100%-5rem)] w-[58%] object-cover object-[60%_30%] [mask-image:linear-gradient(to_left,black_35%,transparent_95%),linear-gradient(to_top,transparent,black_35%)] [mask-composite:intersect] md:hidden"
+      />
 
       <div className="relative grid items-center gap-6 md:grid-cols-[1.2fr_1fr]">
         <div className="z-10">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-xs font-bold text-brand-700 backdrop-blur"
+            className="hidden items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-xs font-bold text-brand-700 backdrop-blur md:inline-flex"
           >
             <Sparkles className="size-3.5" /> 2,000+ pets found a home this year
           </motion.span>
@@ -35,7 +46,7 @@ export default function HeroBanner() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mt-4 text-4xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-6xl"
+            className="mt-6 max-w-[60%] text-[2rem] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-5xl md:mt-4 md:max-w-none lg:text-6xl"
           >
             Find Your <br />
             Perfect Pet
@@ -44,7 +55,7 @@ export default function HeroBanner() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-3 max-w-sm text-sm text-ink/75 sm:text-base"
+            className="mt-3 max-w-[55%] text-sm text-ink/75 sm:text-base md:max-w-sm"
           >
             Healthy pets, trusted sellers, all in one place.
           </motion.p>

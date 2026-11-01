@@ -39,7 +39,7 @@ export default function SellerCard({ seller, onChat, isFavorite, onToggleFavorit
             type="button"
             onClick={onToggleFavorite}
             aria-label={isFavorite ? 'Unfollow seller' : 'Follow seller'}
-            className="focus-ring grid size-10 place-items-center rounded-xl border border-line text-muted transition hover:border-rose-300 hover:text-rose-500"
+            className="focus-ring hidden size-10 place-items-center rounded-xl border border-line text-muted transition hover:border-rose-300 hover:text-rose-500 sm:grid"
           >
             <Heart className={cn('size-4', isFavorite && 'fill-rose-500 text-rose-500')} />
           </button>

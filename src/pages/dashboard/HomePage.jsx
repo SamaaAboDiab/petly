@@ -1,5 +1,6 @@
-import { Cat } from 'lucide-react';
+import { Cat, ChevronDown, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
 import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
 import CategoryFilter from '@/components/pets/CategoryFilter';
@@ -8,28 +9,44 @@ import PetGrid from '@/components/pets/PetGrid';
 import PromoBanner from '@/components/pets/PromoBanner';
 import TrustStrip from '@/components/pets/TrustStrip';
 import SectionHeader from '@/components/ui/SectionHeader';
+import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES } from '@/data/pets';
 import { useAsync } from '@/hooks/useAsync';
 import { petService } from '@/services/petService';
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [category, setCategory] = useState('all');
   const featured = useAsync(() => petService.getFeatured(category), [category]);
   const breeds = useAsync(() => petService.getBreeds(), []);
 
   return (
-    <PageTransition className="space-y-10 lg:space-y-14">
+    <PageTransition className="space-y-7 lg:space-y-14">
+      {/* Mobile location row (on desktop it lives in the top bar). */}
+      <Link
+        to="/app/settings"
+        className="focus-ring -mt-2 inline-flex items-center gap-1.5 rounded-lg text-sm font-medium text-ink lg:hidden"
+      >
+        <MapPin className="size-4 text-ink/70" />
+        {user?.location ?? 'Cairo, Egypt'}
+        <ChevronDown className="size-4 text-muted" />
+      </Link>
+
       <HeroBanner />
-      <TrustStrip />
+      {/* Extra on larger screens; the mobile design goes straight to categories. */}
+      <div className="hidden sm:block">
+        <TrustStrip />
+      </div>
 
       <section>
-        <CategoryFilter value={category} onChange={setCategory} className="mb-8" />
+        <CategoryFilter value={category} onChange={setCategory} className="mb-7 lg:mb-8" />
         <SectionHeader
           title="Featured Pets"
-          subtitle="Hand-picked friends looking for a home"
+          subtitle={<span className="hidden sm:inline">Hand-picked friends looking for a home</span>}
           to={category === 'all' ? '/app/categories' : `/app/categories?type=${category}`}
+          className="mb-4 sm:mb-5"
         />
-        <PetGrid pets={featured.data} loading={featured.loading} />
+        <PetGrid pets={featured.data} loading={featured.loading} mobileCarousel />
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
@@ -44,6 +61,7 @@ export default function HomePage() {
           description="Calm, cuddly and litter trained"
           icon={Cat}
           to="/app/categories?type=cats"
+          className="hidden md:flex"
         />
       </section>
 
