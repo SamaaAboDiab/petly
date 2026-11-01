@@ -18,6 +18,9 @@ const app = express();
 // into filters (NoSQL injection).
 app.set("query parser", "simple");
 
+// Behind the host's proxy (Render), so rate limiting sees the real client IP.
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
+
 // Uploaded images are loaded by the frontend from another origin in
 // production, so allow cross-origin reads of static resources.
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
