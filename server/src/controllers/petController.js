@@ -6,6 +6,7 @@ const { escapeRegex } = require("../utils/query");
 const { AVAILABLE_FILTER, DEFAULT_PET_IMAGES, HEALTH_FEATURES } = require("../config/constants");
 const Pet = require("../models/Pet");
 const User = require("../models/User");
+const { removeUploads } = require("../utils/files");
 
 // Keys match the frontend's sort dropdown values.
 const SORT_OPTIONS = {
@@ -180,8 +181,11 @@ const updatePet = asyncHandler(async (req, res) => {
   if (pet.status === "sold") {
     throw new AppError("Sold listings can't be edited", 400);
   }
+  const previousImages = [...pet.images];
   pet.set(pickPetFields(req.body, { isCreate: false }));
   await pet.save();
+  // Photos that were replaced are no longer referenced anywhere.
+  removeUploads(previousImages.filter((url) => !pet.images.includes(url)));
 
   res.status(200).json({
     success: true,
@@ -194,6 +198,7 @@ const updatePet = asyncHandler(async (req, res) => {
 const deletePet = asyncHandler(async (req, res) => {
   const pet = await loadOwnedPet(req);
   await pet.deleteOne();
+  removeUploads(pet.images);
 
   // Don't leave dangling references in other users' favorites.
   await User.updateMany({ "favorites.pets": pet._id }, { $pull: { "favorites.pets": pet._id } });

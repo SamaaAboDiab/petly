@@ -28,7 +28,7 @@ export default function LoginPage() {
   const onSubmit = async (values) => {
     setServerError('');
     try {
-      const user = await login(values);
+      const user = await login(values, { remember });
       toast({ title: `Welcome back, ${user.name.split(' ')[0]}!`, description: 'Let’s find your perfect pet' });
     } catch (error) {
       setServerError(error.message);

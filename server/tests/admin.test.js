@@ -39,6 +39,11 @@ run(async () => {
   check("admin pets search + seller", r.json.data.pets.length === 1 && r.json.data.pets[0].seller.name === "Ahmed Mohamed", r.json.data);
   r = await call("GET", "/admin/orders", { token: a });
   check("admin orders with buyer", r.json.data.orders.length === 1 && r.json.data.orders[0].user.name === "Ahmed Mohamed", r.json.data);
+  check("admin orders include seller + status", r.json.data.orders[0].seller?.name === "Mariam Adel" && r.json.data.orders[0].status === "pending", r.json.data.orders[0]);
+  r = await call("GET", "/admin/orders?status=delivered", { token: a });
+  check("filter orders by status", r.status === 200 && r.json.data.orders.length === 0, r.json);
+  r = await call("GET", "/admin/orders?status=bogus", { token: a });
+  check("unknown status rejected", r.status === 400, r.json);
 
   // Tickets
   r = await call("GET", "/admin/tickets?status=open", { token: a });

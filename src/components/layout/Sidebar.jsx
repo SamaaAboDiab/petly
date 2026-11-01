@@ -16,10 +16,10 @@ export default function Sidebar({ onAddPet }) {
   const badges = { cart: itemCount, messages: unreadTotal };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-line bg-surface px-5 py-7 lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col overflow-y-auto border-r border-line bg-surface px-5 py-7 lg:flex">
       <Logo className="px-2" />
 
-      <Button size="lg" block leftIcon={Plus} className="mt-8" onClick={onAddPet}>
+      <Button size="lg" block leftIcon={Plus} className="mt-8 shrink-0" onClick={onAddPet}>
         List a Pet
       </Button>
 
@@ -62,8 +62,8 @@ export default function Sidebar({ onAddPet }) {
         ))}
       </nav>
 
-      <div className="mt-auto space-y-4">
-        <div className="on-brand relative overflow-hidden rounded-3xl bg-linear-to-br from-brand-300 to-brand-400 p-5">
+      <div className="mt-auto space-y-4 pt-6">
+        <div className="on-brand relative overflow-hidden rounded-3xl [@media(max-height:820px)]:hidden bg-linear-to-br from-brand-300 to-brand-400 p-5">
           <PawPrint className="absolute -right-4 -top-4 size-20 rotate-12 text-white/40" strokeWidth={1.5} />
           <p className="relative font-bold text-ink">Love Pets?</p>
           <p className="relative mt-1 text-xs text-ink/70">Join our community and get special offers & updates!</p>

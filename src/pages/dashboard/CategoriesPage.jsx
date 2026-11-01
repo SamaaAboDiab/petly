@@ -4,6 +4,7 @@ import PageTransition from '@/components/layout/PageTransition';
 import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
 import CategoryCard, { CategoryCardSkeleton } from '@/components/pets/CategoryCard';
 import CategoryFilter from '@/components/pets/CategoryFilter';
+import { PRICE_LIMITS, SORT_OPTIONS } from '@/components/pets/FilterSheet';
 import PetGrid from '@/components/pets/PetGrid';
 import Button from '@/components/ui/Button';
 import SectionHeader from '@/components/ui/SectionHeader';
@@ -12,19 +13,14 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { pluralize } from '@/lib/format';
 import { petService } from '@/services/petService';
 
-const SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Top Rated' },
-];
-
 export default function CategoriesPage() {
   // Filters live in the URL, so results are shareable and survive refresh.
   const [params, setParams] = useSearchParams();
   const category = params.get('type') ?? 'all';
   const query = params.get('q') ?? '';
   const sort = params.get('sort') ?? 'featured';
+  const maxPrice = params.get('maxPrice') ?? '';
+  const priceLabel = PRICE_LIMITS.find((p) => p.value === maxPrice && p.value)?.label;
   const debouncedQuery = useDebounce(query);
 
   const updateParam = (key, value, fallback) =>
@@ -41,8 +37,8 @@ export default function CategoriesPage() {
   const categories = useAsync(() => petService.getCategories(), []);
   const breeds = useAsync(() => petService.getBreeds(), []);
   const pets = useAsync(
-    () => petService.getPets({ category, query: debouncedQuery, sort }),
-    [category, debouncedQuery, sort],
+    () => petService.getPets({ category, query: debouncedQuery, sort, maxPrice }),
+    [category, debouncedQuery, sort, maxPrice],
   );
 
   const resetFilters = () => setParams({}, { replace: true });
@@ -116,7 +112,21 @@ export default function CategoriesPage() {
       <section id="all-pets" className="scroll-mt-24">
         <SectionHeader
           title={category === 'all' ? 'All pets' : `${category[0].toUpperCase()}${category.slice(1)}`}
-          subtitle={pets.loading ? 'Searching…' : pluralize(pets.data?.length ?? 0, 'pet') + ' available'}
+          subtitle={
+            <span className="flex flex-wrap items-center gap-2">
+              {pets.loading ? 'Searching…' : `${pluralize(pets.data?.length ?? 0, 'pet')} available`}
+              {priceLabel && (
+                <button
+                  type="button"
+                  onClick={() => updateParam('maxPrice', '')}
+                  aria-label={`Remove filter: ${priceLabel}`}
+                  className="focus-ring inline-flex items-center gap-1 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-700 hover:bg-brand-200 dark:bg-brand-400/15 dark:text-brand-300"
+                >
+                  {priceLabel} <X className="size-3" />
+                </button>
+              )}
+            </span>
+          }
           action={
             <label className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink transition hover:border-brand-300">
               <ArrowDownUp className="size-4 text-muted" />

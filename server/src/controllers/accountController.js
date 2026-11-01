@@ -1,17 +1,8 @@
-const fs = require("fs");
-const path = require("path");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { toAuthUser } = require("../utils/serializers");
+const { removeUploads } = require("../utils/files");
 const User = require("../models/User");
-
-const UPLOADS_ROOT = path.join(__dirname, "..", "..");
-
-// Old avatars uploaded to this server are removed when replaced; external
-// URLs (e.g. seeded Unsplash photos) are left alone.
-const removeLocalFile = (url) => {
-  if (url?.startsWith("/uploads/")) fs.unlink(path.join(UPLOADS_ROOT, url), () => {});
-};
 
 const sendUser = (res, user) =>
   res.status(200).json({
@@ -30,10 +21,10 @@ const updateProfile = asyncHandler(async (req, res) => {
   if (location !== undefined) user.location = location;
 
   if (uploadedAvatar) {
-    removeLocalFile(user.avatar);
+    removeUploads([user.avatar]);
     user.avatar = uploadedAvatar;
   } else if (removeAvatar) {
-    removeLocalFile(user.avatar);
+    removeUploads([user.avatar]);
     user.avatar = null;
   }
 

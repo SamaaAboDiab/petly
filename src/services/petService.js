@@ -20,8 +20,8 @@ const toPetForm = (values, files) => {
   return form;
 };
 
-const getPets = ({ category, query, sort, limit } = {}) =>
-  request('/pets', { params: { category, search: query?.trim(), sort, limit } }).then((data) =>
+const getPets = ({ category, query, sort, maxPrice, limit } = {}) =>
+  request('/pets', { params: { category, search: query?.trim(), sort, maxPrice, limit } }).then((data) =>
     data.pets.map(toPet),
   );
 

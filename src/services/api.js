@@ -1,4 +1,4 @@
-import { storage } from '@/lib/storage';
+import { authStorage } from './authStorage';
 
 /**
  * The single network layer. Every service goes through `request`, which adds
@@ -8,7 +8,6 @@ import { storage } from '@/lib/storage';
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 export const API_ORIGIN = new URL(BASE_URL, window.location.origin).origin;
 
-export const TOKEN_KEY = 'token';
 export const UNAUTHORIZED_EVENT = 'petly:unauthorized';
 
 export class ApiError extends Error {
@@ -31,7 +30,7 @@ const buildUrl = (path, params) => {
 };
 
 export async function request(path, { method = 'GET', body, params } = {}) {
-  const token = storage.get(TOKEN_KEY, null);
+  const token = authStorage.getToken();
   const isForm = body instanceof FormData;
 
   const headers = {};

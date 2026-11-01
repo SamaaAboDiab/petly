@@ -2,6 +2,7 @@ const express = require("express");
 const { body, param, query } = require("express-validator");
 const { getStats, getPets, getOrders, getTickets, updateTicket } = require("../controllers/adminController");
 const validate = require("../middleware/validate");
+const { ORDER_STATUSES } = require("../config/constants");
 const { protect, isAdmin } = require("../middleware/auth");
 
 const router = express.Router();
@@ -16,7 +17,7 @@ const listQuery = [
 
 router.get("/stats", getStats);
 router.get("/pets", listQuery, validate, getPets);
-router.get("/orders", listQuery, validate, getOrders);
+router.get("/orders", [...listQuery, query("status").optional().isIn(ORDER_STATUSES)], validate, getOrders);
 router.get("/tickets", [...listQuery, query("status").optional().isIn(["open", "resolved"])], validate, getTickets);
 router.patch(
   "/tickets/:id",

@@ -1,7 +1,7 @@
 import { createContext, use, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { storage } from '@/lib/storage';
-import { API_ORIGIN, TOKEN_KEY } from '@/services/api';
+import { API_ORIGIN } from '@/services/api';
+import { authStorage } from '@/services/authStorage';
 import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
@@ -14,7 +14,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     if (!userId) return;
-    const connection = io(API_ORIGIN, { auth: { token: storage.get(TOKEN_KEY, null) } });
+    const connection = io(API_ORIGIN, { auth: { token: authStorage.getToken() } });
     setSocket(connection);
     return () => {
       connection.disconnect();

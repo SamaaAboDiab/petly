@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import SmartImage from '@/components/ui/SmartImage';
 import { CATEGORIES, HEALTH_FEATURES } from '@/data/pets';
+import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useForm } from '@/hooks/useForm';
 import { cn } from '@/lib/cn';
@@ -89,16 +90,18 @@ export default function AddPetModal({ open, onClose, pet = null, onSaved }) {
   const [files, setFiles] = useState([]);
   const [serverError, setServerError] = useState('');
   const toast = useToast();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Load the pet (or a blank form) each time the modal opens.
   useEffect(() => {
     if (!open) return;
-    setValues(pet ? fromPet(pet) : INITIAL);
+    // New listings start in the user's own city.
+    setValues(pet ? fromPet(pet) : { ...INITIAL, location: user?.location || INITIAL.location });
     setErrors({});
     setFiles([]);
     setServerError('');
-  }, [open, pet, setValues, setErrors]);
+  }, [open, pet, user?.location, setValues, setErrors]);
 
   const handleClose = () => {
     reset();

@@ -85,14 +85,20 @@ const getPets = asyncHandler(async (req, res) => {
   });
 });
 
-// @route   GET /api/admin/orders?page=
+// @route   GET /api/admin/orders?status=&page=
 // @access  Private/Admin
 const getOrders = asyncHandler(async (req, res) => {
+  const filter = req.query.status ? { status: req.query.status } : {};
   const { page, limit, skip } = paginate(req.query);
 
   const [orders, total] = await Promise.all([
-    Order.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate("user", "name email"),
-    Order.countDocuments(),
+    Order.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("user", "name email")
+      .populate("seller", "name email"),
+    Order.countDocuments(filter),
   ]);
 
   res.status(200).json({

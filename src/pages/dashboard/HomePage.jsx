@@ -1,6 +1,6 @@
-import { Cat, ChevronDown, MapPin } from 'lucide-react';
+import { Cat } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import LocationPicker from '@/components/layout/LocationPicker';
 import PageTransition from '@/components/layout/PageTransition';
 import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
 import CategoryFilter from '@/components/pets/CategoryFilter';
@@ -9,13 +9,11 @@ import PetGrid from '@/components/pets/PetGrid';
 import PromoBanner from '@/components/pets/PromoBanner';
 import TrustStrip from '@/components/pets/TrustStrip';
 import SectionHeader from '@/components/ui/SectionHeader';
-import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES } from '@/data/pets';
 import { useAsync } from '@/hooks/useAsync';
 import { petService } from '@/services/petService';
 
 export default function HomePage() {
-  const { user } = useAuth();
   const [category, setCategory] = useState('all');
   const featured = useAsync(() => petService.getFeatured(category), [category]);
   const breeds = useAsync(() => petService.getBreeds(), []);
@@ -23,14 +21,7 @@ export default function HomePage() {
   return (
     <PageTransition className="space-y-7 lg:space-y-14">
       {/* Mobile location row (on desktop it lives in the top bar). */}
-      <Link
-        to="/app/settings"
-        className="focus-ring -mt-2 inline-flex items-center gap-1.5 rounded-lg text-sm font-medium text-ink lg:hidden"
-      >
-        <MapPin className="size-4 text-ink/70" />
-        {user?.location ?? 'Cairo, Egypt'}
-        <ChevronDown className="size-4 text-muted" />
-      </Link>
+      <LocationPicker className="-mt-2 w-fit lg:hidden" />
 
       <HeroBanner />
       {/* Extra on larger screens; the mobile design goes straight to categories. */}

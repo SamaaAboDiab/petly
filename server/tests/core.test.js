@@ -168,6 +168,21 @@ const PNG = Buffer.from(
     r = await call("PUT", `/pets/${saraPet.id}`, { token: saraToken, body: { price: 6500 } });
     check("owner can update", r.status === 200 && r.json.data.pet.price === 6500, r.json);
 
+    // Replacing the photo deletes the old file from disk.
+    const oldImage = saraPet.images[0];
+    const photoForm = new FormData();
+    photoForm.append("images", new Blob([PNG], { type: "image/png" }), "new.png");
+    r = await call("PUT", `/pets/${saraPet.id}`, { token: saraToken, form: photoForm });
+    const newImage = r.json.data?.pet?.images?.[0];
+    await new Promise((res) => setTimeout(res, 200));
+    check(
+      "replaced photo: new one served",
+      r.status === 200 && newImage !== oldImage && (await fetch(`http://localhost:${PORT}${newImage}`)).status === 200,
+      r.json
+    );
+    check("replaced photo: old file deleted", (await fetch(`http://localhost:${PORT}${oldImage}`)).status === 404);
+    saraPet.images = [newImage];
+
     // ---------- Favorites ----------
     r = await call("POST", `/favorites/pets/${golden.id}`, { token: saraToken });
     check("favorite pet", r.json.data.favorited === true, r.json);
@@ -239,6 +254,8 @@ const PNG = Buffer.from(
 
     r = await call("DELETE", `/pets/${saraPet.id}`, { token: adminToken });
     check("admin can delete any listing", r.status === 200, r.json);
+    await new Promise((res) => setTimeout(res, 200));
+    check("deleted listing's photos removed from disk", (await fetch(`http://localhost:${PORT}${saraPet.images[0]}`)).status === 404);
   } finally {
     console.log(`\n${pass} passed, ${fail} failed`);
     server.kill();

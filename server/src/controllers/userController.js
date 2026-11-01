@@ -6,6 +6,7 @@ const Notification = require("../models/Notification");
 const Pet = require("../models/Pet");
 const User = require("../models/User");
 const { notify } = require("../services/notificationService");
+const { removeUploads } = require("../utils/files");
 
 const toAdminUser = (user, listings = 0) => ({
   id: user._id,
@@ -108,7 +109,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   // Remove what only makes sense with the account, and references to it.
   // Orders and conversations are kept as history for the other party.
-  const petIds = (await Pet.find({ seller: user._id }).select("_id").lean()).map((p) => p._id);
+  const pets = await Pet.find({ seller: user._id }).select("_id images").lean();
+  const petIds = pets.map((p) => p._id);
   await Promise.all([
     Pet.deleteMany({ seller: user._id }),
     Cart.deleteOne({ user: user._id }),
@@ -117,6 +119,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     Cart.updateMany({}, { $pull: { items: { pet: { $in: petIds } } } }),
   ]);
   await user.deleteOne();
+  removeUploads([user.avatar, ...pets.flatMap((p) => p.images)]);
 
   res.status(200).json({
     success: true,

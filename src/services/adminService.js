@@ -15,7 +15,7 @@ export const adminService = {
     request('/admin/pets', { params: { search, page } }).then((data) => ({ ...data, pets: data.pets.map(toPet) })),
   deletePet: (petId) => request(`/pets/${petId}`, { method: 'DELETE' }),
 
-  orders: ({ page }) => request('/admin/orders', { params: { page } }),
+  orders: ({ status, page }) => request('/admin/orders', { params: { status, page } }),
 
   tickets: ({ status, page }) => request('/admin/tickets', { params: { status, page } }),
   updateTicket: (ticketId, { reply, status }) =>

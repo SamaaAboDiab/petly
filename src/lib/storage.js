@@ -1,10 +1,10 @@
 const PREFIX = 'petly:';
 
-/** Safe localStorage wrapper — never throws (private mode, quota, bad JSON). */
-export const storage = {
+/** Safe Web Storage wrapper — never throws (private mode, quota, bad JSON). */
+const createStorage = (getBackend) => ({
   get(key, fallback) {
     try {
-      const raw = localStorage.getItem(PREFIX + key);
+      const raw = getBackend().getItem(PREFIX + key);
       return raw === null ? fallback : JSON.parse(raw);
     } catch {
       return fallback;
@@ -12,16 +12,22 @@ export const storage = {
   },
   set(key, value) {
     try {
-      localStorage.setItem(PREFIX + key, JSON.stringify(value));
+      getBackend().setItem(PREFIX + key, JSON.stringify(value));
     } catch {
       /* ignore */
     }
   },
   remove(key) {
     try {
-      localStorage.removeItem(PREFIX + key);
+      getBackend().removeItem(PREFIX + key);
     } catch {
       /* ignore */
     }
   },
-};
+});
+
+/** Survives browser restarts. */
+export const storage = createStorage(() => window.localStorage);
+
+/** Cleared when the browser (tab session) closes. */
+export const sessionStore = createStorage(() => window.sessionStorage);

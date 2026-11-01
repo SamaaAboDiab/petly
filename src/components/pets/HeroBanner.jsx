@@ -3,6 +3,7 @@ import { Search, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SmartImage from '@/components/ui/SmartImage';
+import FilterSheet from './FilterSheet';
 
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&w=900&q=80';
@@ -10,10 +11,21 @@ const HERO_IMAGE =
 export default function HeroBanner() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  /** Opens the results page with the search text plus any chosen filters. */
+  const goToResults = (filters = {}) => {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set('q', query.trim());
+    if (filters.type && filters.type !== 'all') params.set('type', filters.type);
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+    if (filters.sort && filters.sort !== 'featured') params.set('sort', filters.sort);
+    navigate(`/app/categories${params.size ? `?${params}` : ''}`);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    navigate(`/app/categories?q=${encodeURIComponent(query)}`);
+    goToResults();
   };
 
   return (
@@ -75,14 +87,24 @@ export default function HeroBanner() {
               aria-label="Search pets"
               className="min-w-0 flex-1 bg-transparent py-2 text-sm text-ink outline-none placeholder:text-muted"
             />
+            {/* Enter searches; this button opens the filter panel. */}
             <button
-              type="submit"
-              aria-label="Search"
+              type="button"
+              onClick={() => setFiltersOpen(true)}
+              aria-label="Filters"
               className="focus-ring grid size-10 place-items-center rounded-xl bg-ink text-white transition hover:scale-105"
             >
               <SlidersHorizontal className="size-4" />
             </button>
           </motion.form>
+          <FilterSheet
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+            onApply={(filters) => {
+              setFiltersOpen(false);
+              goToResults(filters);
+            }}
+          />
         </div>
 
         <motion.div

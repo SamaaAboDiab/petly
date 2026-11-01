@@ -1,4 +1,4 @@
-import { ChevronDown, Hand, MapPin, MessageCircle, Moon, Search, ShoppingBag, Sun } from 'lucide-react';
+import { Hand, MessageCircle, Moon, Search, ShoppingBag, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import IconButton from '@/components/ui/IconButton';
@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useChat } from '@/context/ChatContext';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/cn';
+import LocationPicker from './LocationPicker';
 import NotificationBell from './NotificationBell';
 import UserAvatar from './UserAvatar';
 
@@ -47,13 +48,7 @@ export default function Topbar({ onOpenSearch, hideOnMobile = false }) {
             </p>
             <p className="truncate text-lg font-bold text-ink">{user?.name}</p>
           </div>
-          <button
-            type="button"
-            className="focus-ring ml-4 flex items-center gap-1.5 rounded-xl px-2 py-1 text-sm text-muted transition hover:text-ink"
-          >
-            <MapPin className="size-4 text-brand-500" /> {user?.location ?? 'Cairo, Egypt'}
-            <ChevronDown className="size-4" />
-          </button>
+          <LocationPicker className="ml-4" />
         </div>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">

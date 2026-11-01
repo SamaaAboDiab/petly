@@ -1,32 +1,29 @@
-import { createContext, use, useCallback, useEffect, useMemo } from 'react';
-import { usePersistentState } from '@/hooks/usePersistentState';
-import { storage } from '@/lib/storage';
-import { TOKEN_KEY, UNAUTHORIZED_EVENT } from '@/services/api';
+import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
+import { UNAUTHORIZED_EVENT } from '@/services/api';
 import { authService } from '@/services/authService';
+import { authStorage } from '@/services/authStorage';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   // The user is cached so the app renders instantly on refresh; the token is
   // what actually authorizes requests (read by services/api.js).
-  const [user, setUser] = usePersistentState('session', null);
+  const [user, setUser] = useState(() => (authStorage.getToken() ? authStorage.getUser() : null));
 
-  const startSession = useCallback(
-    ({ user: sessionUser, token }) => {
-      storage.set(TOKEN_KEY, token);
-      setUser(sessionUser);
-      return sessionUser;
-    },
-    [setUser],
-  );
+  /** `remember` = "Remember me": keep the session after the browser closes. */
+  const startSession = useCallback((session, remember = true) => {
+    authStorage.save(session, remember);
+    setUser(session.user);
+    return session.user;
+  }, []);
 
   const endSession = useCallback(() => {
-    storage.remove(TOKEN_KEY);
+    authStorage.clear();
     setUser(null);
-  }, [setUser]);
+  }, []);
 
   const login = useCallback(
-    async (credentials) => startSession(await authService.login(credentials)),
+    async (credentials, { remember = true } = {}) => startSession(await authService.login(credentials), remember),
     [startSession],
   );
 
@@ -45,28 +42,26 @@ export function AuthProvider({ children }) {
     endSession();
   }, [endSession]);
 
-  // Refresh the cached user once per load (role/verified may have changed),
-  // and drop sessions whose token was removed or expired.
+  /** Replace the cached user after a profile/settings change. */
+  const updateUser = useCallback((nextUser) => {
+    authStorage.saveUser(nextUser);
+    setUser(nextUser);
+  }, []);
+
+  // Refresh the cached user once per load (role/verified may have changed).
   useEffect(() => {
-    if (!storage.get(TOKEN_KEY, null)) {
-      setUser(null);
-      return;
-    }
+    if (!authStorage.getToken()) return;
     authService
       .me()
-      .then(setUser)
+      .then(updateUser)
       .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateUser]);
 
   // Any request answered with 401 means the token is no longer valid.
   useEffect(() => {
     window.addEventListener(UNAUTHORIZED_EVENT, endSession);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, endSession);
   }, [endSession]);
-
-  /** Replace the cached user after a profile/settings change. */
-  const updateUser = useCallback((nextUser) => setUser(nextUser), [setUser]);
 
   const value = useMemo(
     () => ({ user, isAuthenticated: Boolean(user), login, register, resetPassword, logout, updateUser }),
