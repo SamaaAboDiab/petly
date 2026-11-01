@@ -70,7 +70,14 @@ const getPets = asyncHandler(async (req, res) => {
   if (search) {
     // Partial words ("husk") match, so this is an escaped regex rather than $text.
     const pattern = new RegExp(escapeRegex(search.trim()), "i");
-    filter.$or = [{ name: pattern }, { location: pattern }, { category: pattern }];
+    // Also match pets whose seller's name matches ("mariam").
+    const sellers = await User.find({ name: pattern }).select("_id").limit(50).lean();
+    filter.$or = [
+      { name: pattern },
+      { location: pattern },
+      { category: pattern },
+      { seller: { $in: sellers.map((s) => s._id) } },
+    ];
   }
 
   if (category && category !== "all") {

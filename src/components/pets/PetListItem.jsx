@@ -13,13 +13,15 @@ export default function PetListItem({ pet, onUnfavorite }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -60, transition: { duration: 0.25 } }}
-      className="group relative flex items-center gap-4 rounded-3xl border border-line bg-surface p-2.5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift"
+      className="group relative flex items-stretch gap-4 overflow-hidden rounded-3xl border border-line bg-surface shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift"
     >
-      <div className="relative shrink-0">
+      {/* Photo runs flush to the card's left edge, like the design. */}
+      {/* The text sets the row height; the photo fills it whatever its own size. */}
+      <div className="relative w-36 shrink-0 sm:w-40">
         <SmartImage
           src={pet.images[0]}
           alt={pet.name}
-          className="size-28 rounded-2xl sm:size-32"
+          className="absolute inset-0"
           imgClassName="transition-transform !duration-700 group-hover:scale-110"
         />
         {onUnfavorite && (
@@ -33,18 +35,18 @@ export default function PetListItem({ pet, onUnfavorite }) {
           </button>
         )}
       </div>
-      <div className="min-w-0 flex-1 py-1">
+      <div className="min-w-0 flex-1 py-3.5">
         <h3 className="truncate font-bold text-ink">
           <Link to={`/app/pets/${pet.slug ?? pet.id}`} className="focus-ring rounded after:absolute after:inset-0 after:z-10">
             {pet.name}
           </Link>
         </h3>
         {pet.status === 'sold' && <p className="mt-1 text-xs font-semibold text-muted">Found a home</p>}
-        <PetAgeGender pet={pet} className="mt-1.5" />
+        <PetAgeGender pet={pet} withIcon className="mt-1.5" />
         <PetLocation location={pet.location} className="mt-1.5" />
         <p className="mt-2.5 text-lg font-extrabold text-brand-600 dark:text-brand-300">{formatPrice(pet.price)}</p>
       </div>
-      <span className="mr-2 grid size-8 shrink-0 place-items-center self-end rounded-full bg-brand-400 text-on-brand transition-transform duration-300 group-hover:translate-x-1">
+      <span className="mb-3.5 mr-3.5 grid size-8 shrink-0 place-items-center self-end rounded-full bg-brand-400 text-on-brand transition-transform duration-300 group-hover:translate-x-1">
         <ChevronRight className="size-4" strokeWidth={2.6} />
       </span>
     </motion.article>

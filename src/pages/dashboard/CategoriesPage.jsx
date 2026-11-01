@@ -1,4 +1,4 @@
-import { ArrowDownUp, Search, X } from 'lucide-react';
+import { ArrowDownUp, ArrowRight, Search, X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import PageTransition from '@/components/layout/PageTransition';
 import BreedCard, { BreedCardSkeleton } from '@/components/pets/BreedCard';
@@ -47,6 +47,21 @@ export default function CategoriesPage() {
 
   const resetFilters = () => setParams({}, { replace: true });
 
+  // "See All" shows every pet: clear the filters and jump to the results.
+  const seeAll = (
+    <button
+      type="button"
+      onClick={() => {
+        resetFilters();
+        document.getElementById('all-pets')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}
+      className="focus-ring group inline-flex items-center gap-1 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-300"
+    >
+      See All
+      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+    </button>
+  );
+
   return (
     <PageTransition className="space-y-7 sm:space-y-10">
       {/* The mobile design goes straight to search, like the home screen. */}
@@ -60,7 +75,7 @@ export default function CategoriesPage() {
         <input
           value={query}
           onChange={(e) => updateParam('q', e.target.value)}
-          placeholder="Search for pets, breeds, or cities..."
+          placeholder="Search for pets, breeds, or sellers..."
           aria-label="Search pets"
           className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-muted"
         />
@@ -74,7 +89,7 @@ export default function CategoriesPage() {
       <CategoryFilter value={category} onChange={(id) => updateParam('type', id, 'all')} />
 
       <section>
-        <SectionHeader title="Categories" />
+        <SectionHeader title="Categories" action={seeAll} />
         <div className="grid grid-cols-3 gap-3 sm:gap-5">
           {categories.loading
             ? Array.from({ length: 3 }, (_, i) => <CategoryCardSkeleton key={i} />)
@@ -90,7 +105,7 @@ export default function CategoriesPage() {
       </section>
 
       <section>
-        <SectionHeader title="Popular Breeds" />
+        <SectionHeader title="Popular Breeds" action={seeAll} />
         <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
           {breeds.loading
             ? Array.from({ length: 6 }, (_, i) => <BreedCardSkeleton key={i} />)
@@ -98,7 +113,7 @@ export default function CategoriesPage() {
         </div>
       </section>
 
-      <section>
+      <section id="all-pets" className="scroll-mt-24">
         <SectionHeader
           title={category === 'all' ? 'All pets' : `${category[0].toUpperCase()}${category.slice(1)}`}
           subtitle={pets.loading ? 'Searching…' : pluralize(pets.data?.length ?? 0, 'pet') + ' available'}

@@ -12,6 +12,12 @@ run(async () => {
   const shepherd = (await get("german-shepherd")).pet;
   const husky = (await get("siberian-husky")).pet;
 
+  // ---- Search by seller name ----
+  let s = await call("GET", "/pets?search=mariam");
+  check("search matches seller name", s.json.data.pets.length === 5 && s.json.data.pets.every((p) => p.seller === mariam.user.id), s.json.data.pets.map((p) => p.name));
+  s = await call("GET", "/pets?search=.*");
+  check("seller search is literal (no regex injection)", s.json.data.pets.length === 0, s.json.data.pets.length);
+
   // ---- Own listing / race / split ----
   let r = await call("POST", "/orders", { token: ahmed.token, body: { items: [{ petId: golden.id }] } });
   check("cannot order own pet", r.status === 400, r.json);
