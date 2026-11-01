@@ -13,8 +13,8 @@ export const CATEGORIES = [
 
 /** `id` is the pet's slug on the API, so breed cards link straight to a listing. */
 export const BREEDS = [
-  { id: 'golden-retriever', name: 'Golden Retriever', category: 'Dogs', image: img('photo-1633722715463-d30f4f325e24', 400) },
-  { id: 'persian-cat', name: 'Persian', category: 'Cats', image: img('photo-1595433707802-6b2626ef1c91', 400) },
+  { id: 'golden-retriever', name: 'Golden Retriever', category: 'Dogs', image: img('photo-1760615302756-1841ba82573e', 400) },
+  { id: 'persian-cat', name: 'Persian', category: 'Cats', image: img('photo-1660983947244-021f303fdd6b', 400) },
   { id: 'budgie', name: 'Budgie', category: 'Birds', image: img('photo-1522858547137-f1dcec554f55', 400) },
   { id: 'german-shepherd', name: 'German Shepherd', category: 'Dogs', image: img('photo-1589941013453-ec89f33b5e95', 400) },
   { id: 'siberian-husky', name: 'Husky', category: 'Dogs', image: img('photo-1605568427561-40dd23c2acea', 400) },
@@ -23,8 +23,8 @@ export const BREEDS = [
 
 /** Marketing visuals for the splash and auth screens (shown before login). */
 export const SHOWCASE_PETS = [
-  { id: 'golden-retriever', name: 'Golden Retriever', price: 8500, image: img('photo-1633722715463-d30f4f325e24', 500) },
-  { id: 'british-shorthair', name: 'British Shorthair', price: 6200, image: img('photo-1574158622682-e40e69881006', 500) },
+  { id: 'golden-retriever', name: 'Golden Retriever', price: 8500, image: img('photo-1760615302756-1841ba82573e', 500) },
+  { id: 'british-shorthair', name: 'British Shorthair', price: 6200, image: img('photo-1629624467541-f73ef8f12df2', 500) },
   { id: 'scarlet-macaw', name: 'Scarlet Macaw', price: 3500, image: img('photo-1544923408-75c5cef46f14', 500) },
 ];
 

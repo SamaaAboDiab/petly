@@ -59,11 +59,11 @@ const pets = [
     description:
       "Friendly, playful and great with kids. Healthy, vaccinated and ready for a new home. Comes with health record and first set of vaccines.",
     images: [
-      img("photo-1633722715463-d30f4f325e24"),
-      img("photo-1552053831-71594a27632d"),
-      img("photo-1612774412771-005ed8e861d2"),
-      img("photo-1530281700549-e82e7bf110d6"),
-      img("photo-1591160690555-5debfba289f0"),
+      img("photo-1760615302756-1841ba82573e"),
+      img("photo-1760615303229-8b32553033a6"),
+      img("photo-1760615303284-64a42fac2e98"),
+      img("photo-1760615303589-299e2a87c4fa"),
+      img("photo-1760615302825-900295f63a2c"),
     ],
   },
   {
@@ -79,7 +79,7 @@ const pets = [
     features: HEALTHY,
     description:
       "Calm, affectionate and litter trained. Loves cuddles and quiet afternoons. Fully vaccinated with a vet certificate.",
-    images: [img("photo-1574158622682-e40e69881006"), img("photo-1592194996308-7b43878e84a6")],
+    images: [img("photo-1629624467541-f73ef8f12df2"), img("photo-1629624466945-3999c586a130")],
   },
   {
     name: "Scarlet Macaw",
@@ -108,7 +108,13 @@ const pets = [
     features: HEALTHY,
     description:
       "Fluffy, gentle and loves to be groomed. A perfect calm companion for apartments and families.",
-    images: [img("photo-1595433707802-6b2626ef1c91"), img("photo-1513245543132-31f507417b26")],
+    images: [
+      img("photo-1660983947244-021f303fdd6b"),
+      img("photo-1660983947222-cbbd97ce707d"),
+      img("photo-1660983947225-39bfe85cee64"),
+      img("photo-1660983947114-d893fcf89c7a"),
+      img("photo-1660983947223-4680695712be"),
+    ],
   },
   {
     name: "German Shepherd",
@@ -150,11 +156,7 @@ const pets = [
     features: HEALTHY,
     description:
       "Energetic and adventurous with striking blue eyes. Needs an active family who loves long walks.",
-    images: [
-      img("photo-1605568427561-40dd23c2acea"),
-      img("photo-1617895153857-82fe79adfcd4"),
-      img("photo-1568572933382-74d440642117"),
-    ],
+    images: [img("photo-1605568427561-40dd23c2acea")],
   },
   {
     name: "Beagle",
@@ -207,7 +209,7 @@ const pets = [
     sellerKey: "ahmed",
     features: HEALTHY,
     description: "Smart, healthy and full of character — the classic Egyptian street-cat charm.",
-    images: [img("photo-1513360371669-4adf3dd7dff8"), img("photo-1514888286974-6c03e2ca1dba")],
+    images: [img("photo-1513360371669-4adf3dd7dff8")],
   },
   {
     name: "Maine Coon",
@@ -226,7 +228,7 @@ const pets = [
   {
     name: "Labrador Retriever",
     category: "dogs",
-    age: "2 months",
+    age: "1 year",
     gender: "Female",
     location: "Cairo, Egypt",
     price: 11000,
@@ -234,8 +236,8 @@ const pets = [
     rating: 4.9,
     sellerKey: "omar",
     features: HEALTHY,
-    description: "Gentle, clever and eager to please. Already knows “sit” and loves fetch.",
-    images: [img("photo-1591160690555-5debfba289f0")],
+    description: "Gentle, clever and eager to please. House-trained, knows “sit” and loves fetch.",
+    images: [img("photo-1638078463918-f294d9c31a11"), img("photo-1638078462381-38d18c2594ae")],
   },
 ];
 
