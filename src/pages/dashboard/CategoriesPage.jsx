@@ -7,6 +7,7 @@ import { PRICE_LIMITS, SORT_OPTIONS } from '@/components/pets/FilterSheet';
 import PetGrid from '@/components/pets/PetGrid';
 import Button from '@/components/ui/Button';
 import SectionHeader from '@/components/ui/SectionHeader';
+import Select from '@/components/ui/Select';
 import { useAsync } from '@/hooks/useAsync';
 import { useDebounce } from '@/hooks/useDebounce';
 import { pluralize } from '@/lib/format';
@@ -102,21 +103,13 @@ export default function CategoriesPage() {
             </span>
           }
           action={
-            <label className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink transition hover:border-brand-300">
-              <ArrowDownUp className="size-4 text-muted" />
-              <span className="sr-only">Sort by</span>
-              <select
-                value={sort}
-                onChange={(e) => updateParam('sort', e.target.value, 'featured')}
-                className="cursor-pointer bg-transparent font-semibold outline-none"
-              >
-                {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-surface">
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <Select
+              label="Sort by"
+              icon={ArrowDownUp}
+              value={sort}
+              options={SORT_OPTIONS}
+              onChange={(value) => updateParam('sort', value, 'featured')}
+            />
           }
         />
         <PetGrid
