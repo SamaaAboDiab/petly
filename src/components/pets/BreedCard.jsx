@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import SmartImage from '@/components/ui/SmartImage';
+import { petPhoto } from '@/lib/petPhoto';
 import Skeleton from '@/components/ui/Skeleton';
 
 export default function BreedCard({ breed }) {
   return (
     <Link to={`/app/pets/${breed.id}`} className="focus-ring group block w-28 shrink-0 rounded-2xl sm:w-auto">
       <SmartImage
-        src={breed.image}
+        src={petPhoto(breed.image, 1, 400)}
         alt={breed.name}
         className="aspect-square rounded-2xl"
         imgClassName="transition-transform !duration-700 group-hover:scale-110 group-hover:rotate-2"

@@ -25,11 +25,18 @@ export const BREEDS = [
   { id: 'cockatiel', name: 'Cockatiel', category: 'Birds', image: img('photo-1759384278288-14f680d9cae7', 400) },
 ];
 
+/**
+ * Square crop centred on the animal (x, y as 0–1 of the original photo, zoom ≥ 1)
+ * so heads aren't cut off when the photo is shown in a square frame.
+ */
+const squareImg = (id, size, [x, y, zoom = 1]) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&crop=focalpoint&fp-x=${x}&fp-y=${y}&fp-z=${zoom}&w=${size}&h=${size}&q=80`;
+
 /** Marketing visuals for the splash and auth screens (shown before login). */
 export const SHOWCASE_PETS = [
-  { id: 'golden-retriever', name: 'Golden Retriever', price: 8500, image: img('photo-1760615302756-1841ba82573e', 500) },
-  { id: 'british-shorthair', name: 'British Shorthair', price: 6200, image: img('photo-1629624467541-f73ef8f12df2', 500) },
-  { id: 'scarlet-macaw', name: 'Scarlet Macaw', price: 3500, image: img('photo-1544923408-75c5cef46f14', 500) },
+  { id: 'golden-retriever', name: 'Golden Retriever', price: 8500, image: squareImg('photo-1760615302756-1841ba82573e', 500, [0.52, 0.66]) },
+  { id: 'british-shorthair', name: 'British Shorthair', price: 6200, image: squareImg('photo-1629624467541-f73ef8f12df2', 500, [0.48, 0.52]) },
+  { id: 'sun-conure', name: 'Sun Conure', price: 6500, image: squareImg('photo-1709025219993-37d2a0a70031', 500, [0.45, 0.36]) },
 ];
 
 /** Mirrors DELIVERY_FEE on the server; used only for the cart preview. */

@@ -3,6 +3,7 @@ import { Plus, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Badge from '@/components/ui/Badge';
 import SmartImage from '@/components/ui/SmartImage';
+import { petPhoto } from '@/lib/petPhoto';
 import { useAuth } from '@/context/AuthContext';
 import { usePetActions } from '@/hooks/usePetActions';
 import { formatPrice } from '@/lib/format';
@@ -49,7 +50,7 @@ export default function PetCard({ pet }) {
     >
       <div className="relative">
         <SmartImage
-          src={pet.images[0]}
+          src={petPhoto(pet.images[0], 4 / 3.4)}
           alt={pet.name}
           className="aspect-[4/3.4] rounded-2xl"
           imgClassName="group-hover:scale-110 !duration-700"

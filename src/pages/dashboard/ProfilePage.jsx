@@ -92,7 +92,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <PageTransition className="grid items-start gap-8 lg:grid-cols-[400px_1fr]">
+    <PageTransition className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[400px_1fr]">
       {/* Left column — identity + menu */}
       <div className="space-y-5 lg:sticky lg:top-28">
         <section className="relative overflow-hidden rounded-[2rem] border border-line bg-surface shadow-soft">

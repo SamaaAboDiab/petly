@@ -23,9 +23,9 @@ export function AuthHeader({ title, subtitle, icon: Icon }) {
           <motion.span
             animate={{ rotate: [0, 18, -8, 18, 0] }}
             transition={{ duration: 1.2, delay: 0.6, repeat: Infinity, repeatDelay: 2.5 }}
-            className="on-brand grid size-10 origin-bottom-right place-items-center rounded-2xl bg-brand-400 text-ink sm:size-11"
+            className="inline-flex origin-bottom-right text-brand-500"
           >
-            <Icon className="size-5 sm:size-6" />
+            <Icon className="size-8 sm:size-9" />
           </motion.span>
         )}
       </h1>

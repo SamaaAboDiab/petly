@@ -1,7 +1,7 @@
 import { PawPrint } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
-export default function Logo({ withTagline = true, size = 'md', className }) {
+export default function Logo({ withTagline = true, size = 'md', className, taglineClassName }) {
   const large = size === 'lg';
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
@@ -15,7 +15,7 @@ export default function Logo({ withTagline = true, size = 'md', className }) {
       </span>
       <div className="leading-tight">
         <p className={cn('font-extrabold tracking-tight text-ink', large ? 'text-4xl' : 'text-2xl')}>Petly</p>
-        {withTagline && <p className="whitespace-nowrap text-xs font-medium text-muted">Happy Pets, Happy Homes</p>}
+        {withTagline && <p className={cn('whitespace-nowrap text-xs font-medium text-muted', taglineClassName)}>Happy Pets, Happy Homes</p>}
       </div>
     </div>
   );

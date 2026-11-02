@@ -4,12 +4,13 @@ import { Outlet } from 'react-router-dom';
 import Logo from '@/components/ui/Logo';
 import SmartImage from '@/components/ui/SmartImage';
 import { SHOWCASE_PETS } from '@/data/pets';
-import { formatPrice } from '@/lib/format';
 
+// A staggered row (not absolute positions) so the cards never overlap each
+// other or the logo, whatever the panel size.
 const SHOWCASE = [
-  { pet: SHOWCASE_PETS[0], className: 'left-[2%] top-[4%] -rotate-6', delay: 0.2 },
-  { pet: SHOWCASE_PETS[1], className: 'right-[4%] top-[18%] rotate-6', delay: 0.4 },
-  { pet: SHOWCASE_PETS[2], className: 'bottom-[2%] left-[30%] -rotate-3', delay: 0.6 },
+  { pet: SHOWCASE_PETS[0], className: '-rotate-6 -translate-y-8', delay: 0.2 },
+  { pet: SHOWCASE_PETS[2], className: 'rotate-3 translate-y-10', delay: 0.4 },
+  { pet: SHOWCASE_PETS[1], className: 'rotate-6 -translate-y-4', delay: 0.6 },
 ];
 
 function FloatingPetCard({ pet, className, delay }) {
@@ -18,14 +19,11 @@ function FloatingPetCard({ pet, className, delay }) {
       initial={{ opacity: 0, y: 40, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 120, damping: 14, delay }}
-      className={`absolute w-40 xl:w-48 ${className}`}
+      className={`min-w-0 max-w-48 flex-1 ${className}`}
     >
       <div className="animate-float rounded-3xl bg-white p-2 shadow-lift transition-transform duration-300 hover:scale-105" style={{ animationDelay: `${delay * 3}s` }}>
         <SmartImage src={pet.image} alt={pet.name} className="aspect-square rounded-2xl" />
-        <div className="px-1.5 pb-1 pt-2.5">
-          <p className="truncate text-sm font-bold text-[#1e1b16]">{pet.name}</p>
-          <p className="text-sm font-extrabold text-brand-600">{formatPrice(pet.price)}</p>
-        </div>
+        <p className="truncate px-1.5 pb-1 pt-2.5 text-center text-xs font-bold xl:text-sm text-[#1e1b16]">{pet.name}</p>
       </div>
     </motion.div>
   );
@@ -40,7 +38,7 @@ export default function AuthLayout() {
         <div className="absolute -bottom-32 -right-20 size-[28rem] rounded-full bg-brand-600/30 blur-3xl" />
         <div className="relative flex h-full flex-col p-12">
           <Logo className="[&_p]:text-[#1e1b16]" />
-          <div className="relative flex-1">
+          <div className="flex flex-1 items-center justify-center gap-4 py-10 xl:gap-6">
             {SHOWCASE.map((item) => (
               <FloatingPetCard key={item.pet.id} {...item} />
             ))}

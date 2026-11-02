@@ -270,8 +270,9 @@ export default function PetDetailsPage() {
         </div>
       </div>
 
-      {/* Mobile sticky action bar (the bottom nav is hidden on this page). */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/90 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl lg:hidden">
+      {/* Mobile sticky action bar (the bottom nav is hidden on this page).
+          mb-0 cancels the parent's space-y margin, which would lift it off the screen edge. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 mb-0 border-t border-line bg-canvas p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.06)] lg:hidden">
         {isOwner ? (
           <div className="flex gap-3">
             <IconButton icon={Trash2} label="Delete listing" onClick={() => setConfirmDelete(true)} className="size-13 rounded-2xl hover:text-red-500" />

@@ -2,16 +2,16 @@ import { animate, AnimatePresence, motion } from 'framer-motion';
 import { PawPrint } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SmartImage from '@/components/ui/SmartImage';
 import { useAuth } from '@/context/AuthContext';
+import SmartImage from '@/components/ui/SmartImage';
 import { SHOWCASE_PETS } from '@/data/pets';
 
 const LOAD_SECONDS = 2.8;
 const BRAND = 'Petly'.split('');
 const ORBIT = [
-  { pet: SHOWCASE_PETS[0], className: '-left-24 top-10 sm:-left-36', delay: 0.5 },
-  { pet: SHOWCASE_PETS[1], className: '-right-24 top-10 sm:-right-36', delay: 0.7 },
-  { pet: SHOWCASE_PETS[2], className: '-top-24 left-1/2 -translate-x-1/2 sm:-top-28', delay: 0.9 },
+  { pet: SHOWCASE_PETS[0], className: '-left-28 top-6 sm:-left-48 sm:top-2', delay: 0.5 },
+  { pet: SHOWCASE_PETS[1], className: '-right-28 top-6 sm:-right-48 sm:top-2', delay: 0.7 },
+  { pet: SHOWCASE_PETS[2], className: '-top-32 left-1/2 -translate-x-1/2 sm:-top-44', delay: 0.9 },
 ];
 // Paw prints "walk" diagonally across the bottom of the screen.
 const TRAIL = Array.from({ length: 8 }, (_, i) => ({
@@ -74,13 +74,13 @@ export default function SplashPage() {
             </motion.span>
           ))}
 
-          <div className="relative flex flex-col items-center px-6">
+          <div className="relative flex flex-col items-center px-6 pt-28 sm:pt-36">
             <div className="relative">
               {/* Pulsing rings */}
               {[0, 1].map((ring) => (
                 <motion.span
                   key={ring}
-                  className="absolute inset-0 rounded-[2rem] border-2 border-brand-400"
+                  className="absolute inset-0 rounded-full border-2 border-brand-400"
                   initial={{ scale: 1, opacity: 0.6 }}
                   animate={{ scale: 1.9, opacity: 0 }}
                   transition={{ duration: 1.8, repeat: Infinity, delay: ring * 0.9, ease: 'easeOut' }}
@@ -90,13 +90,13 @@ export default function SplashPage() {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: 'spring', stiffness: 160, damping: 12 }}
-                className="relative grid size-28 place-items-center rounded-[2rem] bg-brand-400 shadow-glow"
+                className="relative grid size-28 place-items-center"
               >
                 <motion.span
                   animate={{ rotate: [0, -12, 12, 0] }}
                   transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.6 }}
                 >
-                  <PawPrint className="size-14 text-on-brand" strokeWidth={2.2} />
+                  <PawPrint className="size-20 text-brand-500 drop-shadow-[0_8px_16px_rgba(245,158,11,0.35)]" strokeWidth={2} />
                 </motion.span>
               </motion.div>
 
@@ -112,7 +112,7 @@ export default function SplashPage() {
                   <SmartImage
                     src={pet.image}
                     alt=""
-                    className="size-16 animate-float rounded-full border-4 border-surface shadow-lift sm:size-20"
+                    className="size-20 animate-float rounded-full border border-brand-300 shadow-lift sm:size-28 sm:rounded-[2.25rem] sm:border-2 sm:border-surface"
                   />
                 </motion.div>
               ))}

@@ -39,7 +39,8 @@ export default function Topbar({ onOpenSearch, hideOnMobile = false }) {
       )}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-10">
-        <Logo className="lg:hidden" />
+        {/* The tagline would push the icons off-screen on the narrowest phones. */}
+        <Logo className="lg:hidden" taglineClassName="max-[379px]:hidden" />
 
         <div className="hidden min-w-0 flex-1 items-center gap-4 lg:flex">
           <div>

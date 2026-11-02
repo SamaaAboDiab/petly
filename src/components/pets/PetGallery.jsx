@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Expand } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import SmartImage from '@/components/ui/SmartImage';
+import { petPhoto } from '@/lib/petPhoto';
 import { cn } from '@/lib/cn';
 
 const VISIBLE_THUMBS = 4;
@@ -63,7 +64,7 @@ export function GalleryThumbs({ images, gallery, className }) {
                 i === index && !isLastWithMore ? 'ring-3 ring-brand-400' : 'opacity-80 hover:opacity-100',
               )}
             >
-              <SmartImage src={src} alt="" className="aspect-[4/3]" />
+              <SmartImage src={petPhoto(src, 4 / 3, 300)} alt="" className="aspect-[4/3]" />
               {isLastWithMore && (
                 <span className="absolute inset-0 grid place-items-center bg-black/55 text-lg font-bold text-white">
                   +{total - VISIBLE_THUMBS + 1}
@@ -114,7 +115,7 @@ export default function PetGallery({ images, name, gallery: external, frameClass
         }}
         className="absolute inset-0"
       >
-        <SmartImage src={images[index]} alt={`${name} photo ${index + 1}`} className="size-full" draggable={false} />
+        <SmartImage src={petPhoto(images[index], 4 / 3.2, 1000)} alt={`${name} photo ${index + 1}`} className="size-full" draggable={false} />
       </motion.div>
     </AnimatePresence>
   );

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SmartImage from '@/components/ui/SmartImage';
+import { petPhoto } from '@/lib/petPhoto';
 import { formatPrice } from '@/lib/format';
 import { PetAgeGender, PetLocation } from './PetMeta';
 
@@ -19,7 +20,7 @@ export default function PetListItem({ pet, onUnfavorite }) {
       {/* The text sets the row height; the photo fills it whatever its own size. */}
       <div className="relative w-36 shrink-0 sm:w-40">
         <SmartImage
-          src={pet.images[0]}
+          src={petPhoto(pet.images[0], 0.9, 400)}
           alt={pet.name}
           className="absolute inset-0"
           imgClassName="transition-transform !duration-700 group-hover:scale-110"
