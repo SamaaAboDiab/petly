@@ -1,77 +1,124 @@
 # 🐾 Petly — Happy Pets, Happy Homes
 
-A full-stack pet marketplace: **React 19 + Tailwind CSS v4 + Framer Motion** on the front,
-**Express + MongoDB** in [`server/`](server/README.md).
+A friendly marketplace for buying and selling pets. People can browse dogs, cats and birds, save their favorites, chat with sellers, and list their own pets — all in a warm, playful interface that feels good to use.
+
+**🔗 Live demo:** [petly-pets.vercel.app](https://petly-pets.vercel.app)
+
+On the login page, click **Use demo account** to look around without signing up.
+
+![Petly home page](docs/home.jpg)
+
+## Signing in
+
+The login page shows floating pet cards and a customer quote on one side, and a clean form on the other. The form checks your input as you type, and the sign-up page shows how strong your password is.
+
+![The login page](docs/login.jpg)
+
+## Finding a pet
+
+- **Home**: a big welcome banner, quick filters for dogs, cats and birds, and featured pets.
+- **Categories**: browse by type and filter the list. Filters live in the page link, so you can share a search or refresh without losing it.
+- **Search anywhere**: press **Ctrl + K** (or **⌘ + K** on Mac) to open a quick search for pets and pages.
+
+![Browsing pets](docs/pets.jpg)
+
+![Quick search with Ctrl + K](docs/command-palette.jpg)
+
+## Pet details
+
+Each pet has its own page with a photo gallery (swipe or open it full screen), age, price, health information and the seller's profile.
+
+![A pet details page](docs/pet-details.jpg)
+
+## Cart and checkout
+
+Pick the pets you want, change quantities, try a promo code (`PETLY10` or `HAPPYPET`), and check out with a little confetti at the end.
+
+![The cart](docs/cart.jpg)
+
+## More features
+
+- **List a Pet**: the yellow **+** button lets anyone publish a new listing with photos.
+- **Favorites, Orders and Profile** pages for each user.
+- **Messages and notifications** between buyers and sellers.
+- **Dark mode** that remembers your choice.
+
+![Dark mode](docs/dark-mode.jpg)
+
+## Nice touches
+
+- An animated welcome screen while the app loads.
+- Soft loading placeholders for every section and image.
+- Pet cards tilt and shine when you hover over them.
+- Smooth page transitions and small animations everywhere, with less motion for people who prefer it.
+- Works on phones, tablets and computers.
+
+## Built with
+
+- **Front end:** React 19, Tailwind CSS v4, Framer Motion, React Router
+- **Back end:** Express and MongoDB, with JWT sign-in
+- **Hosting:** Vercel
+
+## Run it on your computer
+
+You need Node.js and a MongoDB database.
 
 ```bash
-# 1) API (first time: create server/.env with PORT, MONGO_URI, JWT_SECRET, JWT_EXPIRE, CLIENT_URL)
-cd server && npm install && npm run seed && npm run dev    # http://localhost:5000
-
-# 2) Frontend (new terminal, project root)
+# 1) The API — first create server/.env with:
+#    PORT, MONGO_URI, JWT_SECRET, JWT_EXPIRE, CLIENT_URL
+cd server
 npm install
-npm run dev      # http://localhost:5173 — /api is proxied to :5000
+npm run seed
+npm run dev        # http://localhost:5000
+
+# 2) The website — in a new terminal, from the project folder
+npm install
+npm run dev        # http://localhost:5173
 ```
 
-**Demo account:** `demo@petly.com` / `petly123` (or click **Use demo account** on the login page).
+Demo account: `demo@petly.com` / `petly123`
 
-## User flow
-
-`/` Splash (animated loader) → `/login` · `/register` → `/app` Dashboard
-(Home · Categories · Pet details · Cart · Favorites · Profile)
-
-## Highlights
-
-- Animated splash screen with progress, orbiting pets and a paw-print trail
-- Split-screen auth with floating pet cards, validation, password strength meter
-- Skeleton loaders for every async section + shimmering image placeholders
-- 3D tilt + light-glare hover on pet cards, micro-interactions everywhere
-- **⌘K / Ctrl+K command palette** — keyboard-driven search across pets & pages
-- Dark mode (persisted), toasts, swipeable gallery + fullscreen lightbox
-- Cart with select / quantity / promo codes (`PETLY10`, `HAPPYPET`) and a confetti checkout
-- "List a pet" flow (+ button) that publishes new listings
-- URL-driven filters (`?type=dogs&q=husky&sort=price-asc`) — shareable & refresh-safe
-- Code-split routes, protected / guest route guards, reduced-motion support
-
-## Project structure
+<details>
+<summary><b>Project structure</b></summary>
 
 ```
 src/
 ├── components/
-│   ├── ui/          # Design-system primitives: Button, Input, Modal, Skeleton, SmartImage…
-│   ├── layout/      # Sidebar, Topbar, MobileNav, CommandPalette, PageTransition
-│   ├── pets/        # PetCard, PetGrid, PetGallery, CategoryFilter, HeroBanner…
-│   ├── cart/        # CartItem, OrderSummary, QuantityStepper, CheckoutSuccess
-│   ├── auth/        # Shared auth-form parts
-│   ├── profile/     # StatCard, MenuItem
-│   └── feedback/    # Toaster, PageLoader
-├── config/          # navigation.js — single source for all menus
-├── context/         # Auth, Theme, Toast, Cart, Favorites (+ AppProviders)
-├── data/            # Static content (categories, breeds, showcase)
-├── hooks/           # useAsync, useForm, useDebounce, useCountUp, useHotkey, usePetActions…
-├── layouts/         # AuthLayout, DashboardLayout
-├── lib/             # cn, format, storage, validators
-├── pages/           # Route-level pages (lazy loaded)
-├── routes/          # AppRouter + guards
-└── services/        # api.js + auth / pet / cart / favorite / order services
+│   ├── ui/          # Buttons, inputs, modals, skeletons, images…
+│   ├── layout/      # Sidebar, top bar, mobile menu, command palette
+│   ├── pets/        # Pet cards, grid, gallery, category filter
+│   ├── cart/        # Cart items, order summary, checkout
+│   ├── auth/        # Shared login / sign-up parts
+│   ├── profile/     # Profile cards and menu
+│   └── feedback/    # Toasts and page loader
+├── config/          # navigation.js — one place for all menus
+├── context/         # Auth, theme, toasts, cart, favorites
+├── data/            # Categories, breeds and showcase content
+├── hooks/           # useAsync, useForm, useDebounce, useHotkey…
+├── layouts/         # Auth and dashboard layouts
+├── lib/             # Helpers: formatting, storage, validation
+├── pages/           # One file per page (loaded on demand)
+├── routes/          # App router and protected routes
+└── services/        # API calls: auth, pets, cart, favorites, orders
 ```
 
-### Deploying (Vercel)
+</details>
 
-Frontend and API deploy together as one Vercel project: `vercel.json` builds the
-Vite app, installs `server/` dependencies and rewrites `/api/*` to `api/index.js`,
-which runs the Express app as a serverless function on the same domain (so
-`VITE_API_URL` stays unset). In the Vercel project:
+<details>
+<summary><b>Deploying to Vercel</b></summary>
 
-1. **Environment variables:** `MONGO_URI`, `JWT_SECRET` (and optionally `RESEND_API_KEY`, `EMAIL_FROM`, `CLIENT_URL` for a custom domain).
-2. **Storage → Blob:** create a store and connect it; this adds `BLOB_READ_WRITE_TOKEN` for photo uploads.
-3. **MongoDB Atlas → Network Access:** allow `0.0.0.0/0` (Vercel has no fixed IPs).
+The website and the API deploy together as one Vercel project. `vercel.json` builds the site, installs the `server/` packages, and sends every `/api/*` request to `api/index.js`, which runs the Express app on the same domain.
 
-Vercel functions can't hold WebSocket connections, so Socket.IO isn't available
-there: chat and notifications automatically fall back to polling
-(`hooks/usePolling.js`); typing indicators only appear with a live socket.
+In the Vercel project:
 
-### Extending it
+1. **Environment variables:** `MONGO_URI`, `JWT_SECRET` (optional: `RESEND_API_KEY`, `EMAIL_FROM`, `CLIENT_URL`).
+2. **Storage → Blob:** create a store and connect it, so pet photos can be uploaded.
+3. **MongoDB Atlas → Network Access:** allow `0.0.0.0/0`, because Vercel has no fixed IP addresses.
 
-- **API calls:** all go through `request()` in `services/api.js` (token, errors, base URL). Set `VITE_API_URL` in production.
-- **New page:** create it in `pages/`, register it in `routes/AppRouter.jsx`, add a menu entry in `config/navigation.js`.
-- **Design tokens:** colors, shadows and animations live in `src/index.css` (`@theme`). Use the `.on-brand` class / `text-on-brand` for content placed on yellow surfaces.
+Vercel can't keep live socket connections open, so chat and notifications check for updates every few seconds instead (`hooks/usePolling.js`). Typing indicators only appear when running locally.
+
+</details>
+
+---
+
+Made by **Samaa Abo Diab** · [LinkedIn](https://www.linkedin.com/in/samaa-abo-diab)
