@@ -20,10 +20,6 @@ The login page shows floating pet cards and a customer quote on one side, and a 
 - **Categories**: browse by type and filter the list. Filters live in the page link, so you can share a search or refresh without losing it.
 - **Search anywhere**: press **Ctrl + K** (or **⌘ + K** on Mac) to open a quick search for pets and pages.
 
-![Browsing pets](docs/pets.jpg)
-
-![Quick search with Ctrl + K](docs/command-palette.jpg)
-
 ## Pet details
 
 Each pet has its own page with a photo gallery (swipe or open it full screen), age, price, health information and the seller's profile.
